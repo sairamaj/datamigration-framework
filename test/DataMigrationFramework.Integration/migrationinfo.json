@@ -1,0 +1,8 @@
+[
+  {
+    "name": "integrationTest",
+    "sourceType": "DataMigrationFramework.Integration.PersonFileSource,DataMigrationFramework.Integration.dll",
+    "destinationType": "DataMigrationFramework.Integration.PersonFileDestination,DataMigrationFramework.Integration.dll",
+    "migrationModel": "DataMigrationFramework.Integration.Model.Person,DataMigrationFramework.Integration.dll"
+  }
+]
