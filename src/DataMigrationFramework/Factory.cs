@@ -26,7 +26,10 @@ namespace DataMigrationFramework
             _container = builder.Build();
         }
 
-        public IDataMigration Get(string name)
+        public IDataMigration Get(
+            string name,
+            IDictionary<string, string> sourceParameters,
+            IDictionary<string, string> destinationParameters)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -39,7 +42,11 @@ namespace DataMigrationFramework
                 throw new ArgumentException($"{name} not found in configuration.");
             }
             var dataMigrationType = typeof(DefaultDataMigration<>).MakeGenericType(new Type[] { config.ModelType });
-            return (IDataMigration)this._container.Resolve(dataMigrationType, new Parameter[] { });
+            return (IDataMigration)this._container.Resolve(
+                dataMigrationType,
+                new NamedParameter("sourceParameters", sourceParameters),
+                new NamedParameter("destinationParameters", destinationParameters));
+
         }
     }
 }

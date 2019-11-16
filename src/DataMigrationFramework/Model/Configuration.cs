@@ -1,22 +1,34 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace DataMigrationFramework.Model
 {
     public class Configuration
     {
-        public Configuration(string name, string sourceTypeName, string destinationTypeName, string modelTypeName)
+        public Configuration(
+            string name, 
+            string sourceTypeName, 
+            string destinationTypeName, 
+            string modelTypeName, 
+            IDictionary<string, string> sourceParameters,
+            IDictionary<string, string> destinationParameters,
+            Settings settings)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.SourceTypeName = ValidTypeName(sourceTypeName,"sourceTypeName");
             this.DestinationTypeName = ValidTypeName(destinationTypeName, "destinationTypeName");
             this.ModelTypeName = ValidTypeName(modelTypeName, "modelTypeName");
+            this.Settings = settings;
         }
 
         public string Name { get;  }
         public string SourceTypeName { get; }
         public string DestinationTypeName { get; }
         public string ModelTypeName { get;}
+
+        public Settings Settings { get; }
 
         public Type SourceType => ParseForType(this.SourceTypeName);
         public Type DestinationType => ParseForType(this.DestinationTypeName);

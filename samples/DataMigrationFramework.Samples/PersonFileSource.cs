@@ -3,25 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DataMigrationFramework.Integration.Model;
+using DataMigrationFramework.Samples.Model;
 
-namespace DataMigrationFramework.Integration.Samples
+namespace DataMigrationFramework.Samples
 {
     /// <summary>
     /// Source for reading persons data file.
     /// </summary>
     public class PersonFileSource : ISource<Person>
     {
-        private readonly string _inputFile = @"TestFile\personsdata.txt";
         private StreamReader _sr;
 
-        public PersonFileSource()
+        public Task PrepareAsync(IDictionary<string, string> parameters)
         {
-        }
-
-        public Task PrepareAsync()
-        {
-            _sr = new StreamReader(File.OpenRead(this._inputFile));
+            var fileName = parameters["fileName"];
+            _sr = new StreamReader(File.OpenRead(fileName));
             var tcs = new TaskCompletionSource<int>();
             tcs.SetResult(0);
             return tcs.Task;

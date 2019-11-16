@@ -45,16 +45,13 @@
   <ItemGroup>
     <Compile Include="DefaultDataMigrationTest.cs" />
     <Compile Include="FactoryTest.cs" />
-    <Compile Include="Model\SampleData.cs" />
-    <Compile Include="Samples\SampleDataDestination.cs" />
-    <Compile Include="Samples\SampleDataSource.cs" />
-    <Compile Include="Samples\PersonDataManager.cs" />
-    <Compile Include="Samples\PersonFileDestination.cs" />
-    <Compile Include="Samples\PersonFileSource.cs" />
-    <Compile Include="Model\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\samples\DataMigrationFramework.Samples\DataMigrationFramework.Samples.csproj">
+      <Project>{e4fa2879-b072-4c10-85c5-ad9afded9f0b}</Project>
+      <Name>DataMigrationFramework.Samples</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\DataMigrationFramework\DataMigrationFramework.csproj">
       <Project>{0f5747dc-9544-4883-ad6a-1c4bbb94cb2f}</Project>
       <Name>DataMigrationFramework</Name>

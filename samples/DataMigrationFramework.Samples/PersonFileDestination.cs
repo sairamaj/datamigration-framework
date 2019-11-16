@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using DataMigrationFramework.Integration.Model;
+using DataMigrationFramework.Samples.Model;
 
-namespace DataMigrationFramework.Integration.Samples
+namespace DataMigrationFramework.Samples
 {
     public class PersonFileDestination :IDestination<Person>
     {
-        private readonly string _outputFile = @"TestFile\personsdestination.txt";
         StreamWriter _sw;
 
-        public Task PrepareAsync()
+        public Task PrepareAsync(IDictionary<string, string> parameters)
         {
-            _sw = new StreamWriter(this._outputFile);
+            var fileName = parameters["fileName"];
+            _sw = new StreamWriter(fileName);
             var tcs = new TaskCompletionSource<int>();
             tcs.SetResult(0);
             return tcs.Task;

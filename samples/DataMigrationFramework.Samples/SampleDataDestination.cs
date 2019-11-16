@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DataMigrationFramework.Integration.Model;
+using DataMigrationFramework.Samples.Model;
 
-namespace DataMigrationFramework.Integration.Samples
+namespace DataMigrationFramework.Samples
 {
     public class SampleDataDestination : IDestination<SampleData>
     {
-        public Task PrepareAsync()
+        public Task PrepareAsync(IDictionary<string, string> parameters)
         {
             throw new NotImplementedException();
         }

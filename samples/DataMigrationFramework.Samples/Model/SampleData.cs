@@ -1,4 +1,4 @@
-﻿namespace DataMigrationFramework.Integration.Model
+﻿namespace DataMigrationFramework.Samples.Model
 {
     public class SampleData
     {

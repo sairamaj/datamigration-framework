@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataMigrationFramework.Model;
 
 namespace DataMigrationFramework
 {
@@ -8,11 +11,22 @@ namespace DataMigrationFramework
     {
         private readonly ISource<T> _source;
         private readonly IDestination<T> _destination;
+        private readonly Settings _settings;
+        private readonly IDictionary<string, string> _sourceParameters;
+        private readonly IDictionary<string, string> _destinationParameters;
 
-        public DefaultDataMigration(ISource<T> source, IDestination<T> destination)
+        public DefaultDataMigration(
+            ISource<T> source, 
+            IDestination<T> destination, 
+            Settings settings,
+            IDictionary<string, string> sourceParameters,
+            IDictionary<string, string> destinationParameters)
         {
-            _source = source;
-            _destination = destination;
+            _source = source ?? throw new ArgumentNullException(nameof(source));
+            _destination = destination ?? throw new ArgumentNullException(nameof(destination));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _sourceParameters = sourceParameters ?? throw new ArgumentNullException(nameof(sourceParameters));
+            _destinationParameters = destinationParameters ?? throw new ArgumentNullException(nameof(destinationParameters));
         }
 
         public async Task StartAsync()
@@ -35,13 +49,13 @@ namespace DataMigrationFramework
                 Exception exception = null;
                 try
                 {
-                    await this._source.PrepareAsync();
-                    await this._destination.PrepareAsync();
+                    await this._source.PrepareAsync(this._sourceParameters);
+                    await this._destination.PrepareAsync(this._destinationParameters);
 
                     do
                     {
                         Console.WriteLine("Before Source.GetAsync");
-                        var items = await this._source.GetAsync(5);
+                        var items = await this._source.GetAsync(_settings.BatchSize);
                         items = items.ToList();
                         Console.WriteLine($"Items length:{items.Count()}");
                         if (!items.Any())

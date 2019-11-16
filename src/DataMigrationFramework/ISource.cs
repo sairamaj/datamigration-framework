@@ -7,7 +7,7 @@ namespace DataMigrationFramework
 {
     public interface ISource<T>
     {
-        Task PrepareAsync();
+        Task PrepareAsync(IDictionary<string, string> parameters);
         Task<IEnumerable<T>> GetAsync(int batchSize);
         Task CleanupAsync();
     }

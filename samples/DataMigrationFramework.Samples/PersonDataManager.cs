@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DataMigrationFramework.Integration.Model;
+using DataMigrationFramework.Samples.Model;
 
-namespace DataMigrationFramework.Integration.Samples
+namespace DataMigrationFramework.Samples
 {
-    class PersonDataManager
+    public class PersonDataManager
     {
         private readonly string _fileName;
 

@@ -5,7 +5,7 @@ namespace DataMigrationFramework
 {
     public interface IDestination<T>
     {
-        Task PrepareAsync();
+        Task PrepareAsync(IDictionary<string, string> parameters);
         Task ConsumeAsync(IEnumerable<T> items);
         Task CleanupAsync();
     }
