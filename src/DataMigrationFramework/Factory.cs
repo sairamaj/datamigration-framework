@@ -44,6 +44,7 @@ namespace DataMigrationFramework
             var dataMigrationType = typeof(DefaultDataMigration<>).MakeGenericType(new Type[] { config.ModelType });
             return (IDataMigration)this._container.Resolve(
                 dataMigrationType,
+                new NamedParameter("settings", config.Settings ?? Settings.Default),
                 new NamedParameter("sourceParameters", sourceParameters),
                 new NamedParameter("destinationParameters", destinationParameters));
 

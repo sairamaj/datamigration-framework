@@ -64,7 +64,10 @@ namespace DataMigrationFramework
                             break;
                         }
 
+                        Console.WriteLine("Consuming Now ...");
                         await this._destination.ConsumeAsync(items);
+                        Console.WriteLine($"Pausing for {this._settings.SleepBetweenMigration}");
+                        await Task.Delay(this._settings.SleepBetweenMigration);
                     } while (true);
                 }
                 catch (Exception e)

@@ -6,7 +6,7 @@
     "ModelTypeName": "DataMigrationFramework.Samples.Model.Person,DataMigrationFramework.Samples.dll",
     "settings": {
       "batchSize": 1,
-      "sleepBetweenMigration": 100,
+      "sleepBetweenMigration": 2000,
       "errorThresholdBeforeExit": 100
     },
     "sourceParameters": {
