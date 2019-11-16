@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using DataMigrationFramework.Integration.Model;
 
-namespace DataMigrationFramework.Integration
+namespace DataMigrationFramework.Integration.Samples
 {
     class PersonDataManager
     {

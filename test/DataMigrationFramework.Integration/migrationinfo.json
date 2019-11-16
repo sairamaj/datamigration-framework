@@ -1,8 +1,15 @@
 [
   {
-    "name": "integrationTest",
-    "sourceType": "DataMigrationFramework.Integration.PersonFileSource,DataMigrationFramework.Integration.dll",
-    "destinationType": "DataMigrationFramework.Integration.PersonFileDestination,DataMigrationFramework.Integration.dll",
-    "migrationModel": "DataMigrationFramework.Integration.Model.Person,DataMigrationFramework.Integration.dll"
+    "name": "personDataMigration",
+    "sourceTypeName": "DataMigrationFramework.Integration.Samples.PersonFileSource,DataMigrationFramework.Integration.dll",
+    "destinationTypeName": "DataMigrationFramework.Integration.Samples.PersonFileDestination,DataMigrationFramework.Integration.dll",
+    "ModelTypeName": "DataMigrationFramework.Integration.Model.Person,DataMigrationFramework.Integration.dll"
+  },
+  {
+    "name": "sampleDataMigration",
+    "sourceTypeName": "DataMigrationFramework.Integration.Samples.SampleDataSource,DataMigrationFramework.Integration.dll",
+    "destinationTypeName": "DataMigrationFramework.Integration.Samples.SampleDataDestination,DataMigrationFramework.Integration.dll",
+    "ModelTypeName": "DataMigrationFramework.Integration.Model.SampleData,DataMigrationFramework.Integration.dll"
   }
+
 ]

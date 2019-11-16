@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using DataMigrationFramework.Integration.Model;
+using DataMigrationFramework.Integration.Samples;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -25,7 +26,7 @@ namespace DataMigrationFramework.Integration
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestFile\personsdata.txt");
 
             // Act
-            await new DefaultDataMigration<Person>(new PersonFileSource(sourceFile), new PersonFileDestination(outputFile)).StartAsync();
+            await new DefaultDataMigration<Person>(new PersonFileSource(), new PersonFileDestination()).StartAsync();
 
             // Assert
             File.Exists(outputFile).Should().BeTrue($"{outputFile} should have existed with migration process");

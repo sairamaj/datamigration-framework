@@ -4,17 +4,12 @@ using System.IO;
 using System.Threading.Tasks;
 using DataMigrationFramework.Integration.Model;
 
-namespace DataMigrationFramework.Integration
+namespace DataMigrationFramework.Integration.Samples
 {
     public class PersonFileDestination :IDestination<Person>
     {
-        private readonly string _outputFile;
+        private readonly string _outputFile = @"TestFile\personsdestination.txt";
         StreamWriter _sw;
-
-        public PersonFileDestination(string outputFile)
-        {
-            _outputFile = outputFile ?? throw new ArgumentNullException(nameof(outputFile));
-        }
 
         public Task PrepareAsync()
         {

@@ -5,19 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataMigrationFramework.Integration.Model;
 
-namespace DataMigrationFramework.Integration
+namespace DataMigrationFramework.Integration.Samples
 {
     /// <summary>
     /// Source for reading persons data file.
     /// </summary>
     public class PersonFileSource : ISource<Person>
     {
-        private readonly string _inputFile;
+        private readonly string _inputFile = @"TestFile\personsdata.txt";
         private StreamReader _sr;
 
-        public PersonFileSource(string inputFile)
+        public PersonFileSource()
         {
-            _inputFile = inputFile ?? throw new ArgumentNullException(nameof(inputFile));
         }
 
         public Task PrepareAsync()

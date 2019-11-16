@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace DataMigrationFramework
 {
     /// <summary>
     /// Interface defining the data migration.
     /// </summary>
-    interface IDataMigration
+    public interface IDataMigration
     {
         /// <summary>
         /// Starts the migration process.
