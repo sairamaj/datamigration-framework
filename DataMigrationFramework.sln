@@ -11,11 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8AFEC143-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataMigrationFramework.Integration", "test\DataMigrationFramework.Integration\DataMigrationFramework.Integration.csproj", "{E198B52C-33DA-49D6-A4DF-CB87BBAA2862}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataMigrationFramework.Console", "src\DataMigrationFramework.Console\DataMigrationFramework.Console.csproj", "{844E5465-9950-4E12-A4D7-85ED9B7ACDD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataMigrationFramework.Console", "src\DataMigrationFramework.Console\DataMigrationFramework.Console.csproj", "{844E5465-9950-4E12-A4D7-85ED9B7ACDD0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{F8464ADF-0A53-4DCD-9BBD-35A92163C2A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataMigrationFramework.Samples", "samples\DataMigrationFramework.Samples\DataMigrationFramework.Samples.csproj", "{E4FA2879-B072-4C10-85C5-AD9AFDED9F0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataMigrationFramework.Samples", "samples\DataMigrationFramework.Samples\DataMigrationFramework.Samples.csproj", "{E4FA2879-B072-4C10-85C5-AD9AFDED9F0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataMigrationFramework.Unit.Test", "test\DataMigrationFramework.Unit.Test\DataMigrationFramework.Unit.Test.csproj", "{F334F8CB-2C85-49B3-8528-791172DE8597}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{E4FA2879-B072-4C10-85C5-AD9AFDED9F0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4FA2879-B072-4C10-85C5-AD9AFDED9F0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4FA2879-B072-4C10-85C5-AD9AFDED9F0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F334F8CB-2C85-49B3-8528-791172DE8597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F334F8CB-2C85-49B3-8528-791172DE8597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F334F8CB-2C85-49B3-8528-791172DE8597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F334F8CB-2C85-49B3-8528-791172DE8597}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{E198B52C-33DA-49D6-A4DF-CB87BBAA2862} = {8AFEC143-918B-4272-8972-0FB85078EDB5}
 		{844E5465-9950-4E12-A4D7-85ED9B7ACDD0} = {2129B34A-C727-47C0-83B8-BF0CBF6BFF2B}
 		{E4FA2879-B072-4C10-85C5-AD9AFDED9F0B} = {F8464ADF-0A53-4DCD-9BBD-35A92163C2A5}
+		{F334F8CB-2C85-49B3-8528-791172DE8597} = {8AFEC143-918B-4272-8972-0FB85078EDB5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2BE301B3-B843-4F15-82B7-F1B1E912A6C7}

@@ -39,10 +39,8 @@ namespace DataMigrationFramework.Integration
                 },
                 new Dictionary<string, string>
                 {
-                    {"fileName", sourceFile}
-                }, new Dictionary<string, string>
-                {
-                    {"fileName", outputFile}
+                    {"inputFileName", sourceFile},
+                    {"outputFileName", outputFile}
                 }
                 ).StartAsync();
 

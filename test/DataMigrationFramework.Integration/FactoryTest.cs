@@ -11,10 +11,9 @@ namespace DataMigrationFramework.Integration
         [Test]
         public void CreatePersonMigration()
         {
-            var dataMigration = new Factory(File.ReadAllText("migrationinfo.json"))
+            var dataMigration = new DefaultMigrationFactory(File.ReadAllText("migrationinfo.json"))
                 .Get(
                     "personDataMigration",
-                    new Dictionary<string, string>(),
                     new Dictionary<string, string>());
             Console.WriteLine(dataMigration);
             dataMigration.Should().NotBeNull();
@@ -23,9 +22,8 @@ namespace DataMigrationFramework.Integration
         [Test]
         public void CreateSampleMigration()
         {
-            var dataMigration = new Factory(File.ReadAllText("migrationinfo.json")).Get(
+            var dataMigration = new DefaultMigrationFactory(File.ReadAllText("migrationinfo.json")).Get(
                 "sampleDataMigration",
-                    new Dictionary<string, string>(),
                     new Dictionary<string, string>());
             Console.WriteLine(dataMigration);
             Console.WriteLine(dataMigration);

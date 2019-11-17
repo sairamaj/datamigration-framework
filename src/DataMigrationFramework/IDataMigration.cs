@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using DataMigrationFramework.Model;
 
 namespace DataMigrationFramework
 {
@@ -11,7 +12,7 @@ namespace DataMigrationFramework
         /// Starts the migration process.
         /// </summary>
         /// <returns></returns>
-        Task StartAsync();
+        Task<MigrationStatus> StartAsync();
 
         /// <summary>
         /// Stop the migration process.

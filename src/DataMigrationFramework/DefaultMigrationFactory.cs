@@ -9,12 +9,12 @@ using Newtonsoft.Json;
 
 namespace DataMigrationFramework
 {
-    public class Factory
+    public class DefaultMigrationFactory : IMigrationFactory
     {
         private readonly IContainer _container;
         private readonly IEnumerable<Configuration> _configs;
 
-        public Factory(string configValue)
+        public DefaultMigrationFactory(string configValue)
         {
             var builder = new Autofac.ContainerBuilder();
             this._configs = JsonConvert.DeserializeObject<IEnumerable<Configuration>>(configValue).ToList();
@@ -26,10 +26,7 @@ namespace DataMigrationFramework
             _container = builder.Build();
         }
 
-        public IDataMigration Get(
-            string name,
-            IDictionary<string, string> sourceParameters,
-            IDictionary<string, string> destinationParameters)
+        public IDataMigration Get(string name, IDictionary<string, string> parameters)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -41,13 +38,16 @@ namespace DataMigrationFramework
             {
                 throw new ArgumentException($"{name} not found in configuration.");
             }
-            var dataMigrationType = typeof(DefaultDataMigration<>).MakeGenericType(new Type[] { config.ModelType });
+            var dataMigrationType = typeof(DefaultDataMigration<>).MakeGenericType(config.ModelType);
             return (IDataMigration)this._container.Resolve(
                 dataMigrationType,
                 new NamedParameter("settings", config.Settings ?? Settings.Default),
-                new NamedParameter("sourceParameters", sourceParameters),
-                new NamedParameter("destinationParameters", destinationParameters));
+                new NamedParameter("parameters", parameters));
+        }
 
+        public IEnumerable<Configuration> GetInfo()
+        {
+            return this._configs;
         }
     }
 }

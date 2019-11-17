@@ -12,11 +12,9 @@ namespace DataMigrationFramework.Samples
 
         public Task PrepareAsync(IDictionary<string, string> parameters)
         {
-            var fileName = parameters["fileName"];
+            var fileName = parameters["outputFileName"];
             _sw = new StreamWriter(fileName);
-            var tcs = new TaskCompletionSource<int>();
-            tcs.SetResult(0);
-            return tcs.Task;
+            return Task.FromResult(0);
         }
 
         public async Task ConsumeAsync(IEnumerable<Person> items)
@@ -31,9 +29,7 @@ namespace DataMigrationFramework.Samples
         public Task CleanupAsync()
         {
             _sw?.Close();
-            var tcs = new TaskCompletionSource<int>();
-            tcs.SetResult(0);
-            return tcs.Task;
+            return Task.FromResult(0);
         }
     }
 }

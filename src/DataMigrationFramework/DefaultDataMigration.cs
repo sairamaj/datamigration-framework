@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DataMigrationFramework.Model;
 
@@ -12,36 +13,40 @@ namespace DataMigrationFramework
         private readonly ISource<T> _source;
         private readonly IDestination<T> _destination;
         private readonly Settings _settings;
-        private readonly IDictionary<string, string> _sourceParameters;
-        private readonly IDictionary<string, string> _destinationParameters;
+        private readonly CancellationTokenSource _cancellationToken;
+        private MigrationStatus _status;
 
         public DefaultDataMigration(
             ISource<T> source, 
             IDestination<T> destination, 
             Settings settings,
-            IDictionary<string, string> sourceParameters,
-            IDictionary<string, string> destinationParameters)
+            IDictionary<string, string> parameters)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _destination = destination ?? throw new ArgumentNullException(nameof(destination));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _sourceParameters = sourceParameters ?? throw new ArgumentNullException(nameof(sourceParameters));
-            _destinationParameters = destinationParameters ?? throw new ArgumentNullException(nameof(destinationParameters));
+            _cancellationToken = new CancellationTokenSource();
+            this.Parameters = parameters;
         }
 
-        public async Task StartAsync()
+        public IDictionary<string, string> Parameters { get; }
+
+        public async Task<MigrationStatus> StartAsync()
         {
-            await InternalStart();
+            return await InternalStart();
         }
 
         public Task StopAsync()
         {
-            throw new NotImplementedException();
+            this._cancellationToken.Cancel();
+            var task = new TaskCompletionSource<int>();
+            task.SetResult(0);
+            return task.Task;
         }
 
-        private Task InternalStart()
+        private Task<MigrationStatus> InternalStart()
         {
-            TaskCompletionSource<int> tcs = new TaskCompletionSource<int>();
+            TaskCompletionSource<MigrationStatus> tcs = new TaskCompletionSource<MigrationStatus>();
             Console.WriteLine("InternalStart...");
             new TaskFactory().StartNew(async () =>
             {
@@ -49,8 +54,8 @@ namespace DataMigrationFramework
                 Exception exception = null;
                 try
                 {
-                    await this._source.PrepareAsync(this._sourceParameters);
-                    await this._destination.PrepareAsync(this._destinationParameters);
+                    await this._source.PrepareAsync(this.Parameters);
+                    await this._destination.PrepareAsync(this.Parameters);
 
                     do
                     {
@@ -67,12 +72,19 @@ namespace DataMigrationFramework
                         Console.WriteLine("Consuming Now ...");
                         await this._destination.ConsumeAsync(items);
                         Console.WriteLine($"Pausing for {this._settings.SleepBetweenMigration}");
-                        await Task.Delay(this._settings.SleepBetweenMigration);
+                        await Task.Delay(this._settings.SleepBetweenMigration, this._cancellationToken.Token);
                     } while (true);
+
+                    this.FlagStatus(MigrationStatus.Completed);
+                }
+                catch (TaskCanceledException)
+                {
+                    this.FlagStatus(MigrationStatus.Cancelled);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    this.FlagStatus(MigrationStatus.Completed);
                     exception = e;
                 }
                 finally
@@ -85,12 +97,17 @@ namespace DataMigrationFramework
                     }
                     else
                     {
-                        tcs.SetResult(0);
+                        tcs.SetResult(this._status);
                     }
                 }
             });
 
             return tcs.Task;
+        }
+
+        private void FlagStatus(MigrationStatus status)
+        {
+            this._status = status;
         }
     }
 }

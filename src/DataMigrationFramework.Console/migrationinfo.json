@@ -9,11 +9,9 @@
       "sleepBetweenMigration": 2000,
       "errorThresholdBeforeExit": 100
     },
-    "sourceParameters": {
-      "fileName": ""
-    },
-    "destinationParameters": {
-      "fileName": ""
+    "parameters": {
+      "inputFileName": "",
+      "ouputFileName": ""
     }
   },
   {
