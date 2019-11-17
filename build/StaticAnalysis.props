@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <AnalysisAssembly Include="Utils.Core.dll">
+      <MinimumCoverage>96</MinimumCoverage>
+    </AnalysisAssembly>
+  </ItemGroup>
+</Project>

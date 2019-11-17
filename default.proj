@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="All" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+  <PropertyGroup>
+    <MasterSemanticVersion>1.0.0</MasterSemanticVersion>
+    <CommonName>DataMigrationFramework</CommonName>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SuiteDirectory>$(MSBuildProjectDirectory)</SuiteDirectory>
+    <BuildDirectory>$(MSBuildProjectDirectory)\artifacts\</BuildDirectory>
+    <BuildBinDirectory>$(MSBuildProjectDirectory)\artifacts\bin\</BuildBinDirectory>
+    <BuildLogDirectory>$(MSBuildProjectDirectory)\artifacts\logs\</BuildLogDirectory>
+    <BuildPackageDirectory>$(MSBuildProjectDirectory)\artifacts\packages\</BuildPackageDirectory>
+  </PropertyGroup>
+  <Import Project="$(MSBuildProjectDirectory)\toolset\msbuildcommunitytasks\MSBuild.Community.Tasks.Targets" />
+  <Import Project="build\Build.Common.Targets" />
+  <Import Project="build\StaticAnalysis.props" />
+  <ItemGroup>
+    <SolutionFile Include="DataMigrationFramework.sln" />
+  </ItemGroup>
+  <Target Name="All">
+    <CallTarget Targets="__RestoreTopLevelPackages" />
+    <CallTarget Targets="Clean" Condition="$(FastBuild)!='true'" />
+    <CallTarget Targets="Build" />
+   <!-- <CallTarget Targets="Test;Coverage" Condition="$(FastBuild)!='true'" />
+    <CallTarget Targets="Package" />  
+-->
+    <Message Text="Build complete." />
+  </Target>
+</Project>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<package>
+	<metadata>
+		<id>DataMigrationFramework</id>
+		<version>1.0.0</version>
+		<authors>sairamaj</authors>
+		<description>Data Migration framework.</description>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<projectUrl>https://github.com/sairamaj/datamigration-framework</projectUrl>
+                <tags>data migration net</tags>
+  </metadata>
+</package>

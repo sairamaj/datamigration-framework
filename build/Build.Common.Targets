@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="__Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+  <PropertyGroup>
+    <SemanticQualifier></SemanticQualifier>
+    <SemanticMetadata Condition="'$(BUILD_VCS_NUMBER)'!=''">+$(BUILD_VCS_NUMBER.Substring(0,8))</SemanticMetadata>
+    <EpochDays>$([System.DateTime]::UtcNow.Subtract($([System.DateTime]::Parse("1970-01-01T00:00:00.0000000Z").ToUniversalTime())).Days)</EpochDays>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Use FastBuild='true' to bypass testing and analysis. -->
+    <FastBuild Condition="$(FastBuild)==''">false</FastBuild>
+    <MSBuildCommunityTasksPath>.</MSBuildCommunityTasksPath>
+    <NpmCommand>"C:\Program Files\nodejs\npm.cmd"</NpmCommand>
+    <NuGetCommand>"$(MSBuildThisFileDirectory)..\toolset\nuget\nuget.exe"</NuGetCommand>
+  </PropertyGroup>
+
+  <Target Name="Build">
+    <CallTarget Targets="__ConfigCleanup" Condition="$(FastBuild)!='true'" />
+    <PropertyGroup>
+      <MvcBuildViews Condition="$(FastBuild)=='true'">false</MvcBuildViews>
+      <MvcBuildViews Condition="$(FastBuild)!='true'">true</MvcBuildViews>
+    </PropertyGroup>
+    <ItemGroup>
+      <FilteredSolutionFile Include="@(SolutionFile)" />
+    </ItemGroup>
+    <Message Text="Compiling projects..." />
+    <Message Text="FilteredSolutionFiles: @(FilteredSolutionFile)" />
+    <!-- nuget restore may need -MSBuildPath parameter -->
+    <Exec Command="$(NuGetCommand) restore &quot;%(FilteredSolutionFile.FullPath)&quot;" />
+    <MSBuild Projects="%(FilteredSolutionFile.FullPath)" Targets="Build" Properties="Configuration=$(BuildConfiguration);MvcBuildViews=$(MvcBuildViews);ResolveAssemblyReferencesSilent=true;TreatWarningsAsErrors=$(TreatWarningsAsErrors)" />
+    <ItemGroup>
+      <SolutionTestProject Include="%(FilteredSolutionFile.RootDir)%(FilteredSolutionFile.Directory)**\*.Tests.csproj;%(FilteredSolutionFile.RootDir)%(FilteredSolutionFile.Directory)test\**\*.csproj" />
+      <SolutionCodeProject Include="%(FilteredSolutionFile.RootDir)%(FilteredSolutionFile.Directory)**\*.csproj" Exclude="@(SolutionTestProject)" />
+    </ItemGroup>
+    <ItemGroup>
+      <BuildOutputList Include="%(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\**\*.resources.dll;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.dll;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.exe;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.xml;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.pdb;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.config;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.msi;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.zip;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.bat;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.dll;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.exe;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.xml;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.pdb;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.config;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.msi;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.zip;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.bat"
+                       Exclude="%(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\**\*.CodeAnalysisLog.xml;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\**\*.vshost.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BuildOutputList)" DestinationFiles="@(BuildOutputList ->'$(BuildBinDirectory)%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="BuildInOrder" Inputs="@(SolutionOrder)" Outputs="%(Identity).Output">
+    <CallTarget Targets="__ConfigCleanup" Condition="$(FastBuild)!='true'" />
+    <PropertyGroup>
+      <Order>%(SolutionOrder.Identity)</Order>
+      <MvcBuildViews Condition="$(FastBuild)=='true'">false</MvcBuildViews>
+      <MvcBuildViews Condition="$(FastBuild)!='true'">true</MvcBuildViews>
+    </PropertyGroup>
+    <ItemGroup>
+      <FilteredSolutionFile Include="@(SolutionFile->WithMetadataValue('Order', $(Order)))" />
+    </ItemGroup>
+    <Message Text="Order: $(Order)" />
+    <Message Text="FilteredSolutionFile: @(FilteredSolutionFile)" />
+    <Exec Command="$(NuGetCommand) restore &quot;%(FilteredSolutionFile.FullPath)&quot;" />
+    <MSBuild Projects="%(FilteredSolutionFile.FullPath)" Targets="Build" Properties="Configuration=$(BuildConfiguration);MvcBuildViews=$(MvcBuildViews);ResolveAssemblyReferencesSilent=true;TreatWarningsAsErrors=$(TreatWarningsAsErrors)" />
+    <ItemGroup>
+      <SolutionTestProject Include="%(FilteredSolutionFile.RootDir)%(FilteredSolutionFile.Directory)**\*.Tests.csproj;%(FilteredSolutionFile.RootDir)%(FilteredSolutionFile.Directory)test\**\*.csproj" />
+      <SolutionCodeProject Include="%(FilteredSolutionFile.RootDir)%(FilteredSolutionFile.Directory)**\*.csproj" Exclude="@(SolutionTestProject)" />
+    </ItemGroup>
+    <ItemGroup>
+      <BuildOutputList Include="%(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\**\*.resources.dll;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.dll;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.exe;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.xml;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.pdb;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.config;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.msi;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.zip;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\$(BuildConfiguration)\*.bat;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.dll;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.exe;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.xml;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.pdb;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.config;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.msi;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.zip;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\*.bat"
+                       Exclude="%(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\**\*.CodeAnalysisLog.xml;
+                                %(SolutionCodeProject.RootDir)%(SolutionCodeProject.Directory)bin\**\*.vshost.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BuildOutputList)" DestinationFiles="@(BuildOutputList ->'$(BuildBinDirectory)%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="Package" DependsOnTargets="__RestoreTopLevelPackages">
+    <CallTarget Targets="BuildAppPackages;BuildNuGetPackages" />
+  </Target>
+
+  <Target Name="BuildAppPackages">
+    <!-- Alternatively build the csproj files directly with the "Package" target. -->
+    <MSBuild Projects="%(SolutionFile.FullPath)" Targets="%(SolutionFile.Package)" Properties="Configuration=$(BuildConfiguration);ResolveAssemblyReferencesSilent=true;DeployOnBuild=true;DeployTarget=Package;PackageAsSingleFile=true;PublishProfile=Package" Condition="'%(SolutionFile.Package)'!=''" />
+    <ItemGroup>
+      <WebAppSetParametersFile Include="%(SolutionFile.RootDir)%(SolutionFile.Directory)**\obj\$(BuildConfiguration)\Package\*.SetParameters.xml" />
+      <WebAppPackageDirectory Include="%(WebAppSetParametersFile.RootDir)%(WebAppSetParametersFile.Directory)" />
+      <WebAppPackageFile Include="%(WebAppPackageDirectory.Identity)*.SetParameters.xml;%(WebAppPackageDirectory.Identity)*.zip" />
+    </ItemGroup>
+    <Copy SourceFiles="@(WebAppPackageFile)" DestinationFiles="@(WebAppPackageFile ->'$(BuildPackageDirectory)%(RecursiveDir)%(Filename)-$(SemanticVersion)%(Extension)')" />
+  </Target>
+
+  <Target Name="BuildNuGetPackages">
+    <ItemGroup>
+      <AppNuspecFile Include="**\*App.nuspec" />
+    </ItemGroup>
+    <Exec Command="$(NuGetCommand) pack %(AppNuspecFile.FullPath) -Version $(SemanticVersion) -BasePath %(AppNuspecFile.RootDir)%(AppNuspecFile.Directory)obj\$(BuildConfiguration)\Package\PackageTmp -NoPackageAnalysis -OutputDirectory $(BuildPackageDirectory) -Properties Configuration=$(BuildConfiguration)" Condition="Exists('%(AppNuspecFile.FullPath)')" />
+    <ItemGroup>
+      <ToolNuspecFile Include="**\*Tool.nuspec" />
+    </ItemGroup>
+    <Exec Command="$(NuGetCommand) pack %(ToolNuspecFile.RootDir)%(ToolNuspecFile.Directory)%(ToolNuspecFile.Filename).csproj -Tool -Version $(SemanticVersion) -IncludeReferencedProjects -Symbols -OutputDirectory $(BuildPackageDirectory) -Properties Configuration=$(BuildConfiguration)" Condition="Exists('%(ToolNuspecFile.FullPath)')" />
+    <!-- NuGet CLI used on csproj currently does not recognize PackageReference dependencies. -->
+    <ItemGroup>
+      <NuspecFile Include="**\*.nuspec" Exclude="**\obj\**;**\*App.nuspec;**\*Tool.nuspec" />
+    </ItemGroup>
+    <Exec Command="$(NuGetCommand) pack %(NuspecFile.RootDir)%(NuspecFile.Directory)%(NuspecFile.Filename).nuspec -Version $(SemanticVersion) -IncludeReferencedProjects -Symbols -OutputDirectory $(BuildPackageDirectory) -Properties Configuration=$(BuildConfiguration)" Condition="Exists('%(NuspecFile.FullPath)')" />
+    <!-- Mark non-packable projects with IsPackable=false or IsTestProject=true property. -->
+    <ItemGroup>
+      <PackableFile Include="**\*.csproj" Exclude="**\*.Tests.csproj;test\**" />
+    </ItemGroup>
+    <MSBuild Projects="@(PackableFile)" Targets="Pack" Properties="PackageVersion=$(SemanticVersion);Configuration=$(BuildConfiguration);IncludeSource=true;IncludeSymbols=true;PackageOutputPath=$(BuildPackageDirectory)" />
+  </Target>
+
+  <Target Name="BuildNpmPackages">
+    <ItemGroup>
+      <NpmPackageFile Include="**\package.json" Exclude="**\node_modules\**" />
+    </ItemGroup>
+    <FileUpdate Files="@(NpmPackageFile)" Encoding="utf-8-without-bom" Regex="&quot;version&quot;:\s*&quot;(.*)&quot;" ReplacementText="&quot;version&quot;: &quot;$(SemanticVersion)$(SemanticMetadata)&quot;" />
+    <Exec Command="$(NpmCommand) pack %(NpmPackageFile.RootDir)%(NpmPackageFile.Directory)" WorkingDirectory="$(BuildPackageDirectory)" />
+  </Target>
+
+  <Target Name="Test">
+    <MakeDir Condition="!Exists('$(BuildLogDirectory)')" Directories="$(BuildLogDirectory)" />
+    <PropertyGroup>
+      <TestRunner>"$(MSBuildThisFileDirectory)..\toolset\packages\Microsoft.TestPlatform\tools\net451\Common7\IDE\Extensions\TestPlatform\vstest.console.exe"</TestRunner>
+      <CoverageAnalyzer>"$(MSBuildThisFileDirectory)..\toolset\packages\Microsoft.TestPlatform\tools\net451\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe"</CoverageAnalyzer>
+      <!-- Alternatively use the TeamCity XML Report Processing feature to monitor the generated TRX files. -->
+      <UseTeamCityLogger Condition="'$(TEAMCITY_VERSION)'!=''">/TestAdapterPath:"$(MSBuildThisFileDirectory)..\toolset\teamcitylogger-net45" /Logger:teamcity</UseTeamCityLogger>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <TestSolutionFile Include="@(SolutionFile)" />
+      <TestSolutionProject Include="%(TestSolutionFile.RootDir)%(TestSolutionFile.Directory)**\*.Tests.csproj;%(TestSolutionFile.RootDir)%(TestSolutionFile.Directory)test\**\*.csproj" />
+      <TestAssembly Include="%(TestSolutionProject.RootDir)%(TestSolutionProject.Directory)bin\$(BuildConfiguration)\*.Tests.dll" Exclude="**\*.TestAdapter.*" />
+    </ItemGroup>
+    <RemoveDir Directories="%(TestSolutionFile.RootDir)%(TestSolutionFile.Directory)TestResults" />
+    <Exec Command="$(TestRunner) /EnableCodeCoverage /Settings:$(MSBuildThisFileDirectory)..\build\Tests.runsettings /ResultsDirectory:&quot;$(BuildLogDirectory)$(CommonName)\TestResults&quot; $(UseTeamCityLogger) /Logger:console;verbosity=minimal /Logger:trx @(TestAssembly, ' ')" IgnoreStandardErrorWarningFormat="true" />
+
+    <ItemGroup>
+      <CoverageFile Include="$(BuildLogDirectory)$(CommonName)\TestResults\**\*.coverage" Exclude="$(BuildLogDirectory)$(CommonName)\TestResults\**\In\**\*.coverage" />
+    </ItemGroup>
+    <Exec Command="$(CoverageAnalyzer) analyze /output:&quot;$(BuildLogDirectory)$(CommonName).Unit.Tests.coveragexml&quot; &quot;@(CoverageFile)&quot;" />
+  </Target>
+
+  <Target Name="Coverage">
+    <CallTarget Targets="CoverageReport;CheckCoverage;ZipCoverage" />
+  </Target>
+
+  <Target Name="CoverageReport">
+    <Exec Command="&quot;$(MSBuildThisFileDirectory)..\toolset\packages\ReportGenerator\tools\ReportGenerator.exe&quot; &quot;-reports:$(BuildLogDirectory)*.coveragexml&quot; &quot;-targetdir:$(BuildLogDirectory)coverage&quot; &quot;-reporttypes:Html;XmlSummary&quot;" />
+  </Target>
+  <Target Name="CheckCoverage" Inputs="@(AnalysisAssembly->HasMetadata('MinimumCoverage'))" Outputs="%(Identity).Output">
+    <PropertyGroup>
+      <AssemblyName>%(AnalysisAssembly.Identity)</AssemblyName>
+      <MinimumCoverage>%(AnalysisAssembly.MinimumCoverage)</MinimumCoverage>
+    </PropertyGroup>
+    <XmlPeek
+      XmlInputPath="$(BuildLogDirectory)coverage\Summary.xml"
+      Query="/CoverageReport/Coverage/Assembly[@name='$(AssemblyName.ToLower())']/@coverage">
+      <Output TaskParameter="Result" PropertyName="CoveragePercentage" />
+    </XmlPeek>
+    <Message Text="MinimumCoverage... $(MinimumCoverage)" />    
+    <Message Text="CoveragePercentage... $(CoveragePercentage)" />    
+    <Error Text="Failed coverage requirement for $(AssemblyName); minimum coverage $(MinimumCoverage)%; result coverage $(CoveragePercentage)%" Condition="$(CoveragePercentage) &lt; $(MinimumCoverage)" />
+  </Target>
+  <Target Name="ZipCoverage">
+    <XmlPeek
+      Query="/CoverageReport/Summary/Linecoverage/text()"
+      XmlInputPath="$(BuildLogDirectory)coverage\Summary.xml">
+      <Output TaskParameter="Result" ItemName="CoveragePercent" />
+    </XmlPeek>
+    <Message Text="##teamcity[buildStatisticValue key='coveragePercent' value='$([System.String]::Copy(&quot;%(CoveragePercent.Identity)&quot;).Replace(&quot;%&quot;,&quot;&quot;))']" />
+    <ItemGroup>
+      <CoverageReportFile Include="$(BuildLogDirectory)coverage\**\*.*" />
+    </ItemGroup>
+    <Zip
+      Files="@(CoverageReportFile)"
+      WorkingDirectory="$(BuildLogDirectory)coverage"
+      ZipFileName="$(BuildLogDirectory)CoverageReport.zip"
+      ZipLevel="9" />
+    <RemoveDir Directories="$(BuildLogDirectory)coverage" />
+  </Target>
+
+  <Target Name="Clean">
+    <MSBuild Projects="%(SolutionFile.FullPath)" Condition="Exists('%(SolutionFile.FullPath)')" Targets="Clean" />
+    <RemoveDir Directories="$(BuildDirectory)" ContinueOnError="true" />
+    <RemoveDir Directories="%(CodeProject.RootDir)%(CodeProject.Directory)bin" Condition="Exists('%(CodeProject.RootDir)%(CodeProject.Directory)bin')" />
+    <RemoveDir Directories="%(CodeProject.RootDir)%(CodeProject.Directory)obj" Condition="Exists('%(CodeProject.RootDir)%(CodeProject.Directory)obj')" />
+    <RemoveDir Directories="%(TestProject.RootDir)%(TestProject.Directory)bin" Condition="Exists('%(TestProject.RootDir)%(TestProject.Directory)bin')" />
+    <RemoveDir Directories="%(TestProject.RootDir)%(TestProject.Directory)obj" Condition="Exists('%(TestProject.RootDir)%(TestProject.Directory)obj')" />
+    <RemoveDir Directories="%(DbProject.RootDir)%(DbProject.Directory)sql" Condition="Exists('%(DbProject.RootDir)%(DbProject.Directory)sql')" />
+    <RemoveDir Directories="%(DbProject.RootDir)%(DbProject.Directory)obj" Condition="Exists('%(DbProject.RootDir)%(DbProject.Directory)obj')" />
+  </Target>
+
+  <Target Name="CleanNuGet">
+    <Message Text="Removing NuGet packages for clean package retrieval." />
+    <ItemGroup>
+      <NuGetPackagesDirectory Include="$([System.IO.Directory]::GetDirectories(&quot;$(MSBuildProjectDirectory)&quot;, &quot;packages&quot;, SearchOption.AllDirectories))" />
+    </ItemGroup>
+    <RemoveDir Directories="@(NuGetPackagesDirectory)" />
+  </Target>
+
+  <Target Name="__Setup">
+    <Error Condition="'%(SolutionFile.FullPath)'==''" Text="You must define an Item list called 'SolutionFile' that contains the list of all projects this script should build." />
+    <ItemGroup>
+      <TestProject Include="%(SolutionFile.RootDir)%(SolutionFile.Directory)**\*.Tests.csproj" />
+      <CodeProject Include="%(SolutionFile.RootDir)%(SolutionFile.Directory)**\*.csproj" Exclude="@(TestProject)" />
+      <DbProject Include="%(SolutionFile.RootDir)%(SolutionFile.Directory)**\*.dbproj" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="__ConfigCleanup">
+    <ItemGroup>
+      <ResxFile Include="%(SolutionFile.RootDir)%(SolutionFile.Directory)**\*.resx"
+                Exclude="%(SolutionFile.RootDir)%(SolutionFile.Directory)toolset\**\*" />
+      <ConfigFile
+        Include="%(SolutionFile.RootDir)%(SolutionFile.Directory)**\*.config;%(SolutionFile.RootDir)%(SolutionFile.Directory)**\*.wxs;%(SolutionFile.RootDir)%(SolutionFile.Directory)**\*.wxl;%(SolutionFile.RootDir)%(SolutionFile.Directory)**\*.wxi"
+        Exclude="%(SolutionFile.RootDir)%(SolutionFile.Directory)toolset\**\*;%(SolutionFile.RootDir)%(SolutionFile.Directory)**\packages.config;%(SolutionFile.RootDir)%(SolutionFile.Directory)**\NuGet.config;%(SolutionFile.RootDir)%(SolutionFile.Directory)**\repositories.config" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="__RemoveReadOnly">
+    <ItemGroup>
+      <ModifiedFile Include="$(MSBuildThisFileDirectory)..\AssemblyVersion.*" />
+    </ItemGroup>
+    <Attrib Files="@(ModifiedFile)" Normal="true" />
+  </Target>
+  <Target Name="__RestoreTopLevelPackages">
+    <Message Text="Restoring top-level NuGet packages..." />
+    <Exec Command="$(NuGetCommand) install &quot;$(MSBuildThisFileDirectory)..\toolset\packages.config&quot; -ExcludeVersion -OutputDirectory &quot;$(MSBuildThisFileDirectory)..\toolset\packages&quot; -ConfigFile &quot;$(MSBuildThisFileDirectory)..\toolset\nuget\NuGet.config&quot;" />
+    <Exec Command="$(NuGetCommand) install &quot;$(MSBuildThisFileDirectory)..\developer\packages.config&quot; -ExcludeVersion -OutputDirectory &quot;$(MSBuildThisFileDirectory)..\developer\packages&quot; -ConfigFile &quot;$(MSBuildThisFileDirectory)..\toolset\nuget\NuGet.config&quot;" />
+  </Target>
+  <Target Name="__SetBuildLabel">
+    <!-- This will be only run in TeamCity. -->
+    <PropertyGroup>
+      <BuildLabel Condition="'$(BUILD_VCS_NUMBER)'!=''">$(MasterSemanticVersion).$(EpochDays)</BuildLabel>
+    </PropertyGroup>
+  </Target>
+  <Target Name="__UpdateSemanticVersion">
+    <PropertyGroup>
+      <SemanticVersion Condition="'$(SemanticVersion)'=='0.0.0'">$(MasterSemanticVersion)-dev</SemanticVersion>
+    </PropertyGroup>
+    <Message Text="##teamcity[buildNumber '$(SemanticVersion)$(SemanticMetadata)']" />
+  </Target>
+</Project>
