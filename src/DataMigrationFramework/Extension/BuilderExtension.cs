@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Reflection;
 using Autofac;
-using Autofac.Core;
 using DataMigrationFramework.Model;
 
 namespace DataMigrationFramework.Extension
@@ -14,6 +12,8 @@ namespace DataMigrationFramework.Extension
             builder.RegisterAssemblyTypes(config.DestinationType.Assembly).AsClosedTypesOf(typeof(IDestination<>));
             builder.RegisterType(config.ModelType);
             builder.RegisterGeneric(typeof(DefaultDataMigration<>));
+            Console.WriteLine($"Registering module.{config.SourceType.Assembly.FullName}");
+            builder.RegisterAssemblyModules(config.SourceType.Assembly);
         }
     }
 }

@@ -12,38 +12,25 @@ namespace DataMigrationFramework.Samples
     /// </summary>
     public class PersonFileSource : ISource<Person>
     {
-        private StreamReader _sr;
+        private readonly IDataAccess _dataAccess;
+
+        public PersonFileSource(IDataAccess dataAccess)
+        {
+            _dataAccess = dataAccess ?? throw new ArgumentNullException(nameof(dataAccess));
+        }
 
         public Task PrepareAsync(IDictionary<string, string> parameters)
         {
-            var fileName = parameters["inputFileName"];
-            _sr = new StreamReader(File.OpenRead(fileName));
             return Task.FromResult(0);
         }
 
         public async Task<IEnumerable<Person>> GetAsync(int batchSize)
         {
-            var persons = new List<Person>();
-            for (int i = 0; i < batchSize; i++)
-            {
-                Console.WriteLine("Read async...");
-                var line = await _sr.ReadLineAsync();
-                Console.WriteLine($"Read async... {line}");
-                if (line == null)
-                {
-                    break;
-                }
-
-                var parts = line.Split(',');
-                persons.Add(new Person { Name = parts.First(), Age = Convert.ToInt32(parts.Last()) });
-            }
-
-            return persons;
+            return await this._dataAccess.GetAsync(batchSize);
         }
 
         public Task CleanupAsync()
         {
-            _sr?.Close();
             return Task.FromResult(0);
         }
     }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Autofac.Core;
 using DataMigrationFramework.Model;
 using DataMigrationFramework.Extension;
 using Newtonsoft.Json;
