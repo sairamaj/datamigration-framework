@@ -1,0 +1,454 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataMigrationFramework</name>
+    </assembly>
+    <members>
+        <member name="T:DataMigrationFramework.DefaultDataMigration`1">
+            <summary>
+            Default data migration implementation of <see cref="T:DataMigrationFramework.IDataMigration"/>.
+            </summary>
+            <typeparam name="T">
+            Type name corresponding to the data migration model which is shared by the <see cref="T:DataMigrationFramework.ISource`1"/> and <see cref="T:DataMigrationFramework.IDestination`1"/>.
+            </typeparam>
+        </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._source">
+            <summary>
+            Data migration source.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._destination">
+            <summary>
+            Data migration destination.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._settings">
+            <summary>
+            Settings used for migration.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._cancellationToken">
+            <summary>
+            Cancellation token used for cancelling the running migration process.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._parameters">
+            <summary>
+            Runtime parameters for source and destination.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._currentStatus">
+            <summary>
+            Current migration status.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.#ctor(DataMigrationFramework.ISource{`0},DataMigrationFramework.IDestination{`0},DataMigrationFramework.Model.Settings,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.DefaultDataMigration`1"/> class.
+            </summary>
+            <param name="source">
+            A <see cref="T:DataMigrationFramework.ISource`1"/> implementation of the source interface for the data.
+            </param>
+            <param name="destination">
+            A <see cref="T:DataMigrationFramework.IDestination`1"/> implementation of the destination for the data.
+            </param>
+            <param name="settings">
+            A <see cref="T:DataMigrationFramework.Model.Settings"/> used for migration.
+            </param>
+            <param name="parameters">
+            A <see cref="T:System.Collections.Generic.IDictionary`2"/> parameters passed to source and destination references for runtime parameters.
+            </param>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.StartAsync">
+            <summary>
+            Start the data migration process.
+            </summary>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task`1"/> representing asynchronous operation.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.StopAsync">
+            <summary>
+            Stops the running migration process.
+            </summary>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task`1"/> representing asynchronous operation.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.InternalStart">
+            <summary>
+            Starts the migration process.
+            </summary>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task`1"/> representing the asynchronous operation.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.FlagStatus(DataMigrationFramework.Model.MigrationStatus)">
+            <summary>
+            Flags the current migration status.
+            </summary>
+            <param name="status">
+            A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> status.
+            </param>
+        </member>
+        <member name="T:DataMigrationFramework.DefaultMigrationFactory">
+            <summary>
+            Default implementation of migration. Uses the JSON value to represent the migration information.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.DefaultMigrationFactory._container">
+            <summary>
+            Autofac container used for registering and resolving the instances.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultMigrationFactory.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.DefaultMigrationFactory"/> class.
+            </summary>
+            <param name="configValue">
+            JSON Configuration value representing the migration information.
+            </param>
+        </member>
+        <member name="P:DataMigrationFramework.DefaultMigrationFactory.Configuration">
+            <summary>
+            Gets configuration representing data migrations.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultMigrationFactory.Get(System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Get data migration reference for the given name.
+            </summary>
+            <remarks>
+            Name is defined in the data migration configuration JSON file.
+            </remarks>
+            <param name="name">
+            Name of the data migration defined in configuration file.
+            </param>
+            <param name="parameters">
+            Parameters passed to source and destination while creating the data migration.
+            </param>
+            <returns>
+            A <see cref="T:DataMigrationFramework.IDataMigration"/> reference which can be used to start and stop the data migration.
+            </returns>
+        </member>
+        <member name="T:DataMigrationFramework.Extension.BuilderExtension">
+            <summary>
+            Autofac builder extension.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.Extension.BuilderExtension.Register(Autofac.ContainerBuilder,DataMigrationFramework.Model.Configuration)">
+            <summary>
+            Register types containing in migration configuration.
+            </summary>
+            <param name="builder">
+            A <see cref="T:Autofac.ContainerBuilder"/> instance.
+            </param>
+            <param name="config">
+            A <see cref="T:DataMigrationFramework.Model.Configuration"/> where types were defined.
+            </param>
+        </member>
+        <member name="T:DataMigrationFramework.IDataMigration">
+            <summary>
+            Interface defining the data migration.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.IDataMigration.StartAsync">
+            <summary>
+            Starts the migration process.
+            </summary>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task`1"/> object representing asynchronous operation. A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> will be returned as part of task object.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.IDataMigration.StopAsync">
+            <summary>
+            Stop the current running migration process.
+            </summary>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task`1"/> object representing asynchronous operation.
+            </returns>
+        </member>
+        <member name="T:DataMigrationFramework.IDestination`1">
+            <summary>
+            Destination interface used for implementing data source for migration.
+            Migration framework uses Consume method to pass the data.
+            </summary>
+            <typeparam name="T">
+            The type of the model where source and destination use.
+            </typeparam>
+        </member>
+        <member name="M:DataMigrationFramework.IDestination`1.PrepareAsync(System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Prepares the destination before the migration called by the framework.
+            </summary>
+            <remarks>
+            Use this to do one time activity for migration.
+            </remarks>
+            <param name="parameters">
+            A <see cref="T:System.Collections.Generic.IDictionary`2"/> parameters passed from the data migration.
+            </param>
+            <returns>
+            The <see cref="T:System.Threading.Tasks.Task"/> object representing the async operation.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.IDestination`1.ConsumeAsync(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Consuming the migration model items.
+            </summary>
+            <param name="items">
+            A <see cref="T:System.Collections.Generic.IEnumerable`1"/> of migration model.
+            </param>
+            <returns>
+            The <see cref="T:System.Threading.Tasks.Task`1"/> object representing the asynchronous operation.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.IDestination`1.CleanupAsync(DataMigrationFramework.Model.MigrationStatus)">
+            <summary>
+            Cleanup done after migration.
+            </summary>
+            <remarks>
+            Called by the framework when migration is done one time. Use this method to do any cleanup operation.
+            </remarks>
+            <param name="state">
+            A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> status representing the status.
+            </param>
+            <returns>
+            The <see cref="T:System.Threading.Tasks.Task"/> object representing the asynchronous operation.
+            </returns>
+        </member>
+        <member name="T:DataMigrationFramework.IMigrationFactory">
+            <summary>
+            Migration factory for creating the <see cref="T:DataMigrationFramework.IDataMigration"/> instances.
+            </summary>
+            <remarks>
+            Use this for getting migration reference from the JSON configuration.
+            </remarks>
+        </member>
+        <member name="P:DataMigrationFramework.IMigrationFactory.Configuration">
+            <summary>
+            Gets the current configuration information.
+            </summary>
+            <returns>
+            A <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="P:DataMigrationFramework.IMigrationFactory.Configuration"/> representing the data migration configuration.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.IMigrationFactory.Get(System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Get data migration reference for the given name.
+            </summary>
+            <remarks>
+            Name is defined in the data migration configuration JSON file.
+            </remarks>
+            <param name="name">
+            Name of the data migration defined in configuration file.
+            </param>
+            <param name="parameters">
+            Parameters passed to source and destination while creating the data migration.
+            </param>
+            <returns>
+            A <see cref="T:DataMigrationFramework.IDataMigration"/> reference which can be used to start and stop the data migration.
+            </returns>
+        </member>
+        <member name="T:DataMigrationFramework.ISource`1">
+            <summary>
+            Source interface used for implementing data source for migration.
+            Migration framework uses GetAsync method to get data and pass it on to destination consumer.
+            </summary>
+            <typeparam name="T">
+            The type of the model where source and destination use.
+            </typeparam>
+        </member>
+        <member name="M:DataMigrationFramework.ISource`1.PrepareAsync(System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Prepares the source before the migration called by the framework.
+            </summary>
+            <remarks>
+            Use this to do one time activity for migration.
+            </remarks>
+            <param name="parameters">
+            A <see cref="T:System.Collections.Generic.IDictionary`2"/> parameters passed from the data migration.
+            </param>
+            <returns>
+            The <see cref="T:System.Threading.Tasks.Task"/> object representing the async operation.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.ISource`1.ProduceAsync(System.Int32)">
+            <summary>
+            Produces the items to be used by the destination.
+            </summary>
+            <remarks>
+            Framework uses this method to send data to destination. Framework stops calling this method once it returns empty list.
+            </remarks>
+            <param name="batchSize">
+            Size of the items to be produced for each call by the producer. Used to limit the resource during the run.
+            </param>
+            <returns>
+            The <see cref="T:System.Threading.Tasks.Task`1"/> object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result"/> property returns the list of model objects.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.ISource`1.CleanupAsync(DataMigrationFramework.Model.MigrationStatus)">
+            <summary>
+            Cleanup done after migration.
+            </summary>
+            <remarks>
+            Called by the framework when migration is done one time. Use this method to do any cleanup operation.
+            </remarks>
+            <param name="state">
+            A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> status representing the status.
+            </param>
+            <returns>
+            The <see cref="T:System.Threading.Tasks.Task"/> object representing the asynchronous operation.
+            </returns>
+        </member>
+        <member name="T:DataMigrationFramework.Model.Configuration">
+            <summary>
+            Configuration used for migration types.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.Model.Configuration.#ctor(System.String,System.String,System.String,System.String,DataMigrationFramework.Model.Settings)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Model.Configuration"/> class.
+            </summary>
+            <param name="name">
+            Unique name of the data migration.
+            </param>
+            <param name="sourceTypeName">
+            Type name (with name,assembly format) which implements <see cref="T:DataMigrationFramework.ISource`1"/> for providing the data.
+            </param>
+            <param name="destinationTypeName">
+            Type name (with name,assembly format) which implements <see cref="T:DataMigrationFramework.IDestination`1"/> for consuming the data.
+            </param>
+            <param name="modelTypeName">
+            Type name which is shared between source and destinations.
+            </param>
+            <param name="settings">
+            A <see cref="P:DataMigrationFramework.Model.Configuration.Settings"/> used by the data migration during migration process.
+            </param>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Configuration.Name">
+            <summary>
+            Gets name of the migration.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Configuration.SourceTypeName">
+            <summary>
+            Gets source type name.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Configuration.DestinationTypeName">
+            <summary>
+            Gets destination type name.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Configuration.ModelTypeName">
+            <summary>
+            Gets model type name.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Configuration.Settings">
+            <summary>
+            Gets settings.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Configuration.SourceType">
+            <summary>
+            Gets source type.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Configuration.DestinationType">
+            <summary>
+            Gets destination type.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Configuration.ModelType">
+            <summary>
+            Gets model type.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.Model.Configuration.ValidTypeName(System.String,System.String)">
+            <summary>
+            Valid type name for correct format which should be in name,assemblyName format.
+            </summary>
+            <param name="typeName">
+            Type name with name,assemblyName format.
+            </param>
+            <param name="property">
+            Property name to be used in exception to inform the property being failed.
+            </param>
+            <returns>
+            Given type name echoed back if successful.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.Model.Configuration.ParseForType(System.String)">
+            <summary>
+            Parse the type name in to actual instance of type.
+            </summary>
+            <param name="typeName">
+            Type name containing name and assembly name.
+            </param>
+            <returns>
+            A <see cref="T:System.Type"/> from the assembly.
+            </returns>
+        </member>
+        <member name="T:DataMigrationFramework.Model.MigrationStatus">
+            <summary>
+            Represents the migration status.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.Model.MigrationStatus.NotStarted">
+            <summary>
+            Not started status.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.Model.MigrationStatus.InProduce">
+            <summary>
+            In produce status.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.Model.MigrationStatus.InConsume">
+            <summary>
+            In consume status.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.Model.MigrationStatus.Completed">
+            <summary>
+            Completed status.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.Model.MigrationStatus.Cancelled">
+            <summary>
+            Cancelled status.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.Model.MigrationStatus.Exception">
+            <summary>
+            Exception status.
+            </summary>
+        </member>
+        <member name="T:DataMigrationFramework.Model.Settings">
+            <summary>
+            Settings used for migration process.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Settings.Default">
+            <summary>
+            Gets default settings.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Settings.BatchSize">
+            <summary>
+            Gets or sets batch size which will used to produce and consume.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Settings.SleepBetweenMigration">
+            <summary>
+            Gets or sets sleep time between migration in milliseconds.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Settings.ErrorThresholdBeforeExit">
+            <summary>
+            Gets or sets number of errors where the migration process stops.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -9,7 +9,7 @@
         /// Not started status.
         /// </summary>
         NotStarted,
-        
+
         /// <summary>
         /// In produce status.
         /// </summary>
@@ -33,6 +33,6 @@
         /// <summary>
         /// Exception status.
         /// </summary>
-        Exception
+        Exception,
     }
 }

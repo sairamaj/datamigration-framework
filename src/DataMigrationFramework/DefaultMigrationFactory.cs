@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using DataMigrationFramework.Model;
 using DataMigrationFramework.Extension;
+using DataMigrationFramework.Model;
 using Newtonsoft.Json;
 
 namespace DataMigrationFramework
 {
     /// <summary>
-    /// Default implementation of migration. Uses the JSON value to represent the migration information. 
+    /// Default implementation of migration. Uses the JSON value to represent the migration information.
     /// </summary>
     public class DefaultMigrationFactory : IMigrationFactory
     {
         /// <summary>
-        /// Autofac container used for registering and resolving the instances. 
+        /// Autofac container used for registering and resolving the instances.
         /// </summary>
         private readonly IContainer _container;
 
@@ -33,13 +33,13 @@ namespace DataMigrationFramework
                 builder.Register(config);
             }
 
-            _container = builder.Build();
+            this._container = builder.Build();
         }
 
         /// <summary>
         /// Gets configuration representing data migrations.
         /// </summary>
-        public IEnumerable<Configuration> Configuration { get; set; }
+        public IEnumerable<Configuration> Configuration { get; }
 
         /// <summary>
         /// Get data migration reference for the given name.

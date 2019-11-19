@@ -12,7 +12,7 @@
         {
             BatchSize = 5,
             SleepBetweenMigration = 10,
-            ErrorThresholdBeforeExit = 10
+            ErrorThresholdBeforeExit = 10,
         };
 
         /// <summary>

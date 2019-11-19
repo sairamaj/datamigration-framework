@@ -33,7 +33,9 @@ namespace DataMigrationFramework
         /// <remarks>
         /// Framework uses this method to send data to destination. Framework stops calling this method once it returns empty list.
         /// </remarks>
-        /// <param name="batchSize"></param>
+        /// <param name="batchSize">
+        /// Size of the items to be produced for each call by the producer. Used to limit the resource during the run.
+        /// </param>
         /// <returns>
         /// The <see cref="Task{TREsult}"/> object representing the asynchronous operation. The <see cref="Task{T}.Result"/> property returns the list of model objects.
         /// </returns>

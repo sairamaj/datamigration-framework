@@ -8,9 +8,11 @@ using DataMigrationFramework.Model;
 namespace DataMigrationFramework
 {
     /// <summary>
-    /// Default data migration implementation of <see cref="IDataMigration  "/>
+    /// Default data migration implementation of <see cref="IDataMigration"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">
+    /// Type name corresponding to the data migration model which is shared by the <see cref="ISource{T}"/> and <see cref="IDestination{T}"/>.
+    /// </typeparam>
     public class DefaultDataMigration<T> : IDataMigration
     {
         /// <summary>
@@ -59,8 +61,8 @@ namespace DataMigrationFramework
         /// A <see cref="IDictionary{TKey,TValue}"/> parameters passed to source and destination references for runtime parameters.
         /// </param>
         public DefaultDataMigration(
-            ISource<T> source, 
-            IDestination<T> destination, 
+            ISource<T> source,
+            IDestination<T> destination,
             Settings settings,
             IDictionary<string, string> parameters)
         {
@@ -71,7 +73,6 @@ namespace DataMigrationFramework
             this._parameters = parameters;
         }
 
-
         /// <summary>
         /// Start the data migration process.
         /// </summary>
@@ -80,7 +81,7 @@ namespace DataMigrationFramework
         /// </returns>
         public async Task<MigrationStatus> StartAsync()
         {
-            return await InternalStart();
+            return await this.InternalStart();
         }
 
         /// <summary>
@@ -106,10 +107,8 @@ namespace DataMigrationFramework
         private Task<MigrationStatus> InternalStart()
         {
             TaskCompletionSource<MigrationStatus> tcs = new TaskCompletionSource<MigrationStatus>();
-            Console.WriteLine("InternalStart...");
             new TaskFactory().StartNew(async () =>
             {
-                Console.WriteLine("In Task...");
                 Exception exception = null;
                 try
                 {
@@ -118,21 +117,17 @@ namespace DataMigrationFramework
 
                     do
                     {
-                        Console.WriteLine("Before Source.GetAsync");
-                        var items = await this._source.ProduceAsync(_settings.BatchSize);
+                        var items = await this._source.ProduceAsync(this._settings.BatchSize);
                         items = items.ToList();
-                        Console.WriteLine($"Items length:{items.Count()}");
                         if (!items.Any())
                         {
-                            Console.WriteLine("Done...");
                             break;
                         }
 
-                        Console.WriteLine("Consuming Now ...");
                         await this._destination.ConsumeAsync(items);
-                        Console.WriteLine($"Pausing for {this._settings.SleepBetweenMigration}");
                         await Task.Delay(this._settings.SleepBetweenMigration, this._cancellationToken.Token);
-                    } while (true);
+                    }
+                    while (true);
 
                     this.FlagStatus(MigrationStatus.Completed);
                 }
@@ -142,7 +137,6 @@ namespace DataMigrationFramework
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
                     this.FlagStatus(MigrationStatus.Completed);
                     exception = e;
                 }
