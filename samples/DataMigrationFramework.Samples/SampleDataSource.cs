@@ -13,7 +13,7 @@ namespace DataMigrationFramework.Samples
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SampleData>> GetAsync(int batchSize)
+        public Task<IEnumerable<SampleData>> ProduceAsync(int batchSize)
         {
             throw new NotImplementedException();
         }

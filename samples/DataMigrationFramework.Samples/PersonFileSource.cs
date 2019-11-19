@@ -25,7 +25,7 @@ namespace DataMigrationFramework.Samples
             return Task.FromResult(0);
         }
 
-        public async Task<IEnumerable<Person>> GetAsync(int batchSize)
+        public async Task<IEnumerable<Person>> ProduceAsync(int batchSize)
         {
             return await this._dataAccess.GetAsync(batchSize);
         }

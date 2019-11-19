@@ -20,7 +20,7 @@ namespace DataMigrationFramework.Console.Handlers
 
         public Task<IEnumerable<Configuration>> Handle(ListMigrationInfo request, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_factory.GetInfo());
+            return Task.FromResult(_factory.Configuration);
         }
     }
 }

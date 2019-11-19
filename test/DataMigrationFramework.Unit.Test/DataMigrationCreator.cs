@@ -19,9 +19,9 @@ namespace DataMigrationFramework.Unit.Test
             mockDestination.Stub(dest => dest.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
             mockSource.Stub(source => source.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));
             mockDestination.Stub(dest => dest.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));
-            mockSource.Stub(source => source.GetAsync(settings.BatchSize))
+            mockSource.Stub(source => source.ProduceAsync(settings.BatchSize))
                 .Return(Task.FromResult<IEnumerable<string>>(new string[] { "item1" })).Repeat.Once();
-            mockSource.Stub(source => source.GetAsync(settings.BatchSize))
+            mockSource.Stub(source => source.ProduceAsync(settings.BatchSize))
                 .Return(Task.FromResult<IEnumerable<string>>(new string[] { })).Repeat.Once();
             mockDestination.Stub(dest => dest.ConsumeAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
 
