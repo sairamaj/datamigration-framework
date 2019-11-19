@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DataMigrationFramework.Model;
 
 namespace DataMigrationFramework
 {
@@ -9,6 +8,6 @@ namespace DataMigrationFramework
     {
         Task PrepareAsync(IDictionary<string, string> parameters);
         Task<IEnumerable<T>> GetAsync(int batchSize);
-        Task CleanupAsync();
+        Task CleanupAsync(MigrationStatus state);
     }
 }

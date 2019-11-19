@@ -89,8 +89,8 @@ namespace DataMigrationFramework
                 }
                 finally
                 {
-                    await this._source.CleanupAsync();
-                    await this._destination.CleanupAsync();
+                    await this._source.CleanupAsync(this._status);
+                    await this._destination.CleanupAsync(this._status);
                     if (exception != null)
                     {
                         tcs.SetException(exception);

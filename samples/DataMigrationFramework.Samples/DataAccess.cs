@@ -7,13 +7,24 @@ using DataMigrationFramework.Samples.Model;
 
 namespace DataMigrationFramework.Samples
 {
-    class DataAccess :IDataAccess
+    public class DataAccess :IDataAccess
     {
         private StreamReader _sr;
+        private StreamWriter _sw;
+        private bool _isDisposed;
 
-        public DataAccess(string fileName)
+        public DataAccess(string inputFileName, string outputFileName)
         {
-            _sr = new StreamReader(File.OpenRead(fileName));
+            Console.WriteLine("In DataAccess.Ctor");
+            this._sr = new StreamReader(File.OpenRead(inputFileName));
+            this._sw = new StreamWriter(outputFileName);
+
+        }
+
+        ~DataAccess()
+        {
+            this.Dispose(false);
+            GC.SuppressFinalize(this);
         }
 
         public async Task<IEnumerable<Person>> GetAsync(int batchSize)
@@ -36,9 +47,34 @@ namespace DataMigrationFramework.Samples
             return persons;
         }
 
-        public void Save(Person p)
+        public async Task SaveAsync(IEnumerable<Person> persons)
         {
-            throw new NotImplementedException();
+            foreach (var person in persons)
+            {
+                await _sw.WriteLineAsync($"{person.Name},{person.Age}");
+            }
+        }
+
+        public void Close()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+
+
+        private void Dispose(bool isDisposing)
+        {
+            if (isDisposing && !_isDisposed)
+            {
+                _sw?.Close();
+                _sr?.Close();
+
+                this._sw = null;
+                this._sr = null;
+
+                this._isDisposed = true;
+            }
         }
     }
 }

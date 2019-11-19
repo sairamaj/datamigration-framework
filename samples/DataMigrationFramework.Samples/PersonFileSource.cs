@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DataMigrationFramework.Model;
 using DataMigrationFramework.Samples.Model;
 
 namespace DataMigrationFramework.Samples
@@ -29,8 +30,9 @@ namespace DataMigrationFramework.Samples
             return await this._dataAccess.GetAsync(batchSize);
         }
 
-        public Task CleanupAsync()
+        public Task CleanupAsync(MigrationStatus status)
         {
+            this._dataAccess.Close();
             return Task.FromResult(0);
         }
     }

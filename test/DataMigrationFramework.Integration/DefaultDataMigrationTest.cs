@@ -18,19 +18,20 @@ namespace DataMigrationFramework.Integration
         {
             // Arrange
             var outputFile =
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestFile\personsdestination.txt");
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestFiles\personsdestination.txt");
             if (File.Exists(outputFile))
             {
                 File.Delete(outputFile);
             }
 
             var sourceFile =
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestFile\personsdata.txt");
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestFiles\personsdata.txt");
 
             // Act
+            var dataAccess = new DataAccess(sourceFile, outputFile);
             await new DefaultDataMigration<Person>(
-                new PersonFileSource(),
-                new PersonFileDestination(),
+                new PersonFileSource(dataAccess),
+                new PersonFileDestination(dataAccess),
                 new Settings()
                 {
                     BatchSize = 2,

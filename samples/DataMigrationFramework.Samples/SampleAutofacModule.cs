@@ -6,7 +6,8 @@ namespace DataMigrationFramework.Samples
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(ctx => new DataAccess(@"TestFiles\personsdata.txt")).As<IDataAccess>();
+            builder.Register(ctx => new DataAccess(@"TestFiles\personsdata.txt", @"TestFiles\personsout.txt"))
+                .As<IDataAccess>().InstancePerLifetimeScope();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace DataMigrationFramework.Samples
     public interface IDataAccess
     {
         Task<IEnumerable<Person>> GetAsync(int batchSize);
-        void Save(Person p);
+        Task SaveAsync(IEnumerable<Person> persons);
+        void Close();
     }
 }

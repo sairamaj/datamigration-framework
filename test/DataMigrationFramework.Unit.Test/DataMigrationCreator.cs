@@ -17,8 +17,8 @@ namespace DataMigrationFramework.Unit.Test
             var settings = new Settings() { BatchSize = 1 };
             mockSource.Stub(source => source.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
             mockDestination.Stub(dest => dest.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
-            mockSource.Stub(source => source.CleanupAsync()).IgnoreArguments().Return(Task.FromResult(0));
-            mockDestination.Stub(dest => dest.CleanupAsync()).IgnoreArguments().Return(Task.FromResult(0));
+            mockSource.Stub(source => source.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));
+            mockDestination.Stub(dest => dest.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));
             mockSource.Stub(source => source.GetAsync(settings.BatchSize))
                 .Return(Task.FromResult<IEnumerable<string>>(new string[] { "item1" })).Repeat.Once();
             mockSource.Stub(source => source.GetAsync(settings.BatchSize))

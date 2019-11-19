@@ -2,33 +2,34 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using DataMigrationFramework.Model;
 using DataMigrationFramework.Samples.Model;
 
 namespace DataMigrationFramework.Samples
 {
     public class PersonFileDestination :IDestination<Person>
     {
-        StreamWriter _sw;
+        private readonly IDataAccess _dataAccess;
+
+        public PersonFileDestination(IDataAccess dataAccess)
+        {
+            _dataAccess = dataAccess ?? throw new ArgumentNullException(nameof(dataAccess));
+        }
 
         public Task PrepareAsync(IDictionary<string, string> parameters)
         {
             var fileName = parameters["outputFileName"];
-            _sw = new StreamWriter(fileName);
             return Task.FromResult(0);
         }
 
-        public async Task ConsumeAsync(IEnumerable<Person> items)
+        public async Task ConsumeAsync(IEnumerable<Person> persons)
         {
-            foreach (var item in items)
-            {
-                Console.WriteLine(item);
-                await _sw.WriteLineAsync($"{item.Name},{item.Age}");
-            }
+            await this._dataAccess.SaveAsync(persons);
         }
 
-        public Task CleanupAsync()
+        public Task CleanupAsync(MigrationStatus status)
         {
-            _sw?.Close();
+            this._dataAccess.Close();
             return Task.FromResult(0);
         }
     }

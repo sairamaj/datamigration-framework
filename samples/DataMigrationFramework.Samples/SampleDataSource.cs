@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DataMigrationFramework.Model;
 using DataMigrationFramework.Samples.Model;
 
 namespace DataMigrationFramework.Samples
@@ -17,7 +18,7 @@ namespace DataMigrationFramework.Samples
             throw new NotImplementedException();
         }
 
-        public Task CleanupAsync()
+        public Task CleanupAsync(MigrationStatus state)
         {
             throw new NotImplementedException();
         }
