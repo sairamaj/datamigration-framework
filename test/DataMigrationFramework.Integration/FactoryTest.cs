@@ -13,6 +13,7 @@ namespace DataMigrationFramework.Integration
         {
             var dataMigration = new DefaultMigrationFactory(File.ReadAllText("migrationinfo.json"))
                 .Get(
+                    Guid.NewGuid(),
                     "personDataMigration",
                     new Dictionary<string, string>());
             Console.WriteLine(dataMigration);
@@ -23,6 +24,7 @@ namespace DataMigrationFramework.Integration
         public void CreateSampleMigration()
         {
             var dataMigration = new DefaultMigrationFactory(File.ReadAllText("migrationinfo.json")).Get(
+                Guid.NewGuid(),
                 "sampleDataMigration",
                     new Dictionary<string, string>());
             Console.WriteLine(dataMigration);

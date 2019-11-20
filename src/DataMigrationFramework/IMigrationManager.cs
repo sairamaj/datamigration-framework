@@ -11,42 +11,20 @@ namespace DataMigrationFramework
     public interface IMigrationManager
     {
         /// <summary>
-        /// Starts migration with given unique id.
+        /// Gets data migration reference if one already exists otherwise creates new one.
         /// </summary>
-        /// <param name="migrationId">
-        /// Migration id which can be used for keep tracking the status.
+        /// <param name="id">
+        /// Id of the migration.
         /// </param>
-        /// <param name="name">
-        /// Name of the migration task.
+        /// <param name="migrationTaskName">
+        /// Migration task name.
         /// </param>
         /// <param name="parameters">
-        /// Migration task parameters.
+        /// Task parameters.
         /// </param>
         /// <returns>
-        /// A <see cref="Task"/> representing asynchronous operation.
+        /// A <see cref="IDataMigration"/> instance. Either a newly created one if does not exist or previously created one.
         /// </returns>
-        Task StartAsync(Guid migrationId, string name, IDictionary<string, string> parameters);
-
-        /// <summary>
-        /// Stops existing running migration.
-        /// </summary>
-        /// <param name="migrationId">
-        /// Previously ran migration id.
-        /// </param>
-        /// <returns>
-        /// A <see cref="Task"/> representing asynchronous operation.
-        /// </returns>
-        Task StopAsync(Guid migrationId);
-
-        /// <summary>
-        /// Gets migration status.
-        /// </summary>
-        /// <param name="migrationId">
-        /// Previously ran migration id.
-        /// </param>
-        /// <returns>
-        /// A <see cref="Task"/> representing asynchronous operation.
-        /// </returns>
-        Task<MigrationStatus> GetStatus(Guid migrationId);
+        IDataMigration Get(Guid id, string migrationTaskName, IDictionary<string, string> parameters);
     }
 }

@@ -26,6 +26,8 @@ namespace DataMigrationFramework.Unit.Test
             mockDestination.Stub(dest => dest.ConsumeAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
 
             DefaultDataMigration = new DefaultDataMigration<string>(
+                Guid.NewGuid(),
+                "testing",
                 mockSource,
                 mockDestination,
                 settings,

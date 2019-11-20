@@ -29,7 +29,7 @@ namespace DataMigrationFramework
         /// <summary>
         /// Notifies the progress to observers.
         /// </summary>
-        /// <param name="status">
+        /// <param name="info">
         /// A <see cref="MigrationInformation"/> info.
         /// </param>
         public void Notify(MigrationInformation info)

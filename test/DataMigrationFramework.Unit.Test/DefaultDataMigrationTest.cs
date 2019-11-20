@@ -16,7 +16,7 @@ namespace DataMigrationFramework.Unit.Test
             var migration = new DataMigrationCreator().DefaultDataMigration;
 
             // Act
-            var status = await migration.StartAsync(Guid.NewGuid());
+            var status = await migration.StartAsync();
 
             // Assert.
             status.Should().Be(MigrationStatus.Completed);
@@ -29,7 +29,7 @@ namespace DataMigrationFramework.Unit.Test
             var migration = new DataMigrationCreator().DefaultDataMigration;
 
             // Act
-            var task = migration.StartAsync(Guid.NewGuid());
+            var task = migration.StartAsync();
             await migration.StopAsync();
 
             var status = await task;

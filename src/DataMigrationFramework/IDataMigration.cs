@@ -18,12 +18,9 @@ namespace DataMigrationFramework
         /// Starts the migration process.
         /// </summary>
         /// <returns>
-        /// <param name="id">
-        /// Id of the migration.
-        /// </param>
         /// A <see cref="Task{T}"/> object representing asynchronous operation. A <see cref="MigrationStatus"/> will be returned as part of task object.
         /// </returns>
-        Task<MigrationStatus> StartAsync(Guid id);
+        Task<MigrationStatus> StartAsync();
 
         /// <summary>
         /// Stop the current running migration process.

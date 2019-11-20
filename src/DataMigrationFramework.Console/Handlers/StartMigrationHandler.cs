@@ -8,22 +8,23 @@ namespace DataMigrationFramework.Console.Handlers
 {
     public class StartMigrationHandler : IRequestHandler<StartMigrationRequest, Guid>
     {
-        private readonly IMigrationFactory _factory;
+        private readonly IMigrationManager _manager;
 
-        public StartMigrationHandler(IMigrationFactory factory)
+        public StartMigrationHandler(IMigrationManager manager)
         {
-            _factory = factory;
+            _manager = manager;
         }
 
         public Task<Guid> Handle(StartMigrationRequest request, CancellationToken cancellationToken)
         {
-            var migration = _factory.Get(request.Name, request.Parameters);
+            var id = Guid.NewGuid();
+            var migration = _manager.Get(id,  request.Name, request.Parameters);
             migration.Subscribe(s =>
             {
                 System.Console.WriteLine($"[Notification] {s.Id}: {s.Status}");
             });
-            migration.StartAsync(Guid.NewGuid());
-            return Task.FromResult(Guid.NewGuid());
+            migration.StartAsync();
+            return Task.FromResult(id);
         }
     }
 }

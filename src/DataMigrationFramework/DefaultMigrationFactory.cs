@@ -47,7 +47,10 @@ namespace DataMigrationFramework
         /// <remarks>
         /// Name is defined in the data migration configuration JSON file.
         /// </remarks>
-        /// <param name="name">
+        /// <param name="id">
+        /// Migration identifier.
+        /// </param>
+        /// <param name="migrationName">
         /// Name of the data migration defined in configuration file.
         /// </param>
         /// <param name="parameters">
@@ -56,22 +59,24 @@ namespace DataMigrationFramework
         /// <returns>
         /// A <see cref="IDataMigration"/> reference which can be used to start and stop the data migration.
         /// </returns>
-        public IDataMigration Get(string name, IDictionary<string, string> parameters)
+        public IDataMigration Get(Guid id, string migrationName, IDictionary<string, string> parameters)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(migrationName))
             {
-                throw new ArgumentException(nameof(name));
+                throw new ArgumentException(nameof(migrationName));
             }
 
-            var config = this.Configuration.FirstOrDefault(c => c.Name == name);
+            var config = this.Configuration.FirstOrDefault(c => c.Name == migrationName);
             if (config == null)
             {
-                throw new ArgumentException($"{name} not found in configuration.");
+                throw new ArgumentException($"{migrationName} not found in configuration.");
             }
 
             var dataMigrationType = typeof(DefaultDataMigration<>).MakeGenericType(config.ModelType);
             return (IDataMigration)this._container.Resolve(
                 dataMigrationType,
+                new NamedParameter("id", id),
+                new NamedParameter("name", migrationName),
                 new NamedParameter("settings", config.Settings ?? Settings.Default),
                 new NamedParameter("parameters", parameters));
         }

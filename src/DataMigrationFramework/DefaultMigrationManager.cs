@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using DataMigrationFramework.Model;
 
 namespace DataMigrationFramework
 {
@@ -33,78 +31,30 @@ namespace DataMigrationFramework
         }
 
         /// <summary>
-        /// Starts migration with given unique id.
-        /// </summary>
-        /// <param name="migrationId">
-        /// Migration id which can be used for keep tracking the status.
-        /// </param>
-        /// <param name="name">
-        /// Name of the migration task.
-        /// </param>
-        /// <param name="parameters">
-        /// Migration task parameters.
-        /// </param>
-        /// <returns>
-        /// A <see cref="Task"/> representing asynchronous operation.
-        /// </returns>
-        public async Task StartAsync(Guid migrationId, string name, IDictionary<string, string> parameters)
-        {
-            if (!this.CanStart(migrationId))
-            {
-                throw new InvalidOperationException($"{migrationId} is already running.");
-            }
-
-            var migration = this._factory.Get(name, parameters);
-            this._dataMigrationsMap[migrationId] = migration;
-            await migration.StartAsync(migrationId);
-        }
-
-        /// <summary>
-        /// Stops existing running migration.
-        /// </summary>
-        /// <param name="migrationId">
-        /// Previously ran migration id.
-        /// </param>
-        /// <returns>
-        /// A <see cref="Task"/> representing asynchronous operation.
-        /// </returns>
-        public Task StopAsync(Guid migrationId)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Gets migration status.
-        /// </summary>
-        /// <param name="migrationId">
-        /// Previously ran migration id.
-        /// </param>
-        /// <returns>
-        /// A <see cref="Task"/> representing asynchronous operation.
-        /// </returns>
-        public Task<MigrationStatus> GetStatus(Guid migrationId)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks whether a migration can start or not.
+        /// Gets data migration reference if one already exists otherwise creates new one.
         /// </summary>
         /// <param name="id">
         /// Id of the migration.
         /// </param>
+        /// <param name="migrationTaskName">
+        /// Migration task name.
+        /// </param>
+        /// <param name="parameters">
+        /// Task parameters.
+        /// </param>
         /// <returns>
-        /// True if can because it does not exist or not running. False if one is already running.
+        /// A <see cref="IDataMigration"/> instance. Either a newly created one if does not exist or previously created one.
         /// </returns>
-        private bool CanStart(Guid id)
+        public IDataMigration Get(Guid id, string migrationTaskName, IDictionary<string, string> parameters)
         {
-            if (!this._dataMigrationsMap.TryGetValue(id, out IDataMigration val))
+            if (this._dataMigrationsMap.TryGetValue(id, out IDataMigration val))
             {
-                // does not exists
-                return true;
+                return val;
             }
 
-            return val.CurrentStatus != MigrationStatus.Running;
+            var migration = this._factory.Get(id, migrationTaskName, parameters);
+            this._dataMigrationsMap[id] = migration;
+            return migration;
         }
     }
 }

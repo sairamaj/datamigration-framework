@@ -42,15 +42,16 @@
             Runtime parameters for source and destination.
             </summary>
         </member>
-        <member name="F:DataMigrationFramework.DefaultDataMigration`1._id">
-            <summary>
-            Migration id.
-            </summary>
-        </member>
-        <member name="M:DataMigrationFramework.DefaultDataMigration`1.#ctor(DataMigrationFramework.ISource{`0},DataMigrationFramework.IDestination{`0},DataMigrationFramework.Model.Settings,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.#ctor(System.Guid,System.String,DataMigrationFramework.ISource{`0},DataMigrationFramework.IDestination{`0},DataMigrationFramework.Model.Settings,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Initializes a new instance of the <see cref="T:DataMigrationFramework.DefaultDataMigration`1"/> class.
             </summary>
+            <param name="id">
+            Migration identifier.
+            </param>
+            <param name="name">
+            Migration name.
+            </param>
             <param name="source">
             A <see cref="T:DataMigrationFramework.ISource`1"/> implementation of the source interface for the data.
             </param>
@@ -64,19 +65,26 @@
             A <see cref="T:System.Collections.Generic.IDictionary`2"/> parameters passed to source and destination references for runtime parameters.
             </param>
         </member>
+        <member name="P:DataMigrationFramework.DefaultDataMigration`1.Id">
+            <summary>
+            Gets migration identifier.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.DefaultDataMigration`1.Name">
+            <summary>
+            Gets migration name.
+            </summary>
+        </member>
         <member name="P:DataMigrationFramework.DefaultDataMigration`1.CurrentStatus">
             <summary>
             Gets current migration status.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.DefaultDataMigration`1.StartAsync(System.Guid)">
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.StartAsync">
             <summary>
             Starts the migration process.
             </summary>
             <returns>
-            <param name="id">
-            Id of the migration.
-            </param>
             A <see cref="T:System.Threading.Tasks.Task`1"/> object representing asynchronous operation. A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> will be returned as part of task object.
             </returns>
         </member>
@@ -143,14 +151,17 @@
             Gets configuration representing data migrations.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.DefaultMigrationFactory.Get(System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:DataMigrationFramework.DefaultMigrationFactory.Get(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Get data migration reference for the given name.
             </summary>
             <remarks>
             Name is defined in the data migration configuration JSON file.
             </remarks>
-            <param name="name">
+            <param name="id">
+            Migration identifier.
+            </param>
+            <param name="migrationName">
             Name of the data migration defined in configuration file.
             </param>
             <param name="parameters">
@@ -183,54 +194,21 @@
             A <see cref="T:DataMigrationFramework.IMigrationFactory"/> used for creating the migration instances.
             </param>
         </member>
-        <member name="M:DataMigrationFramework.DefaultMigrationManager.StartAsync(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:DataMigrationFramework.DefaultMigrationManager.Get(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
-            Starts migration with given unique id.
-            </summary>
-            <param name="migrationId">
-            Migration id which can be used for keep tracking the status.
-            </param>
-            <param name="name">
-            Name of the migration task.
-            </param>
-            <param name="parameters">
-            Migration task parameters.
-            </param>
-            <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> representing asynchronous operation.
-            </returns>
-        </member>
-        <member name="M:DataMigrationFramework.DefaultMigrationManager.StopAsync(System.Guid)">
-            <summary>
-            Stops existing running migration.
-            </summary>
-            <param name="migrationId">
-            Previously ran migration id.
-            </param>
-            <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> representing asynchronous operation.
-            </returns>
-        </member>
-        <member name="M:DataMigrationFramework.DefaultMigrationManager.GetStatus(System.Guid)">
-            <summary>
-            Gets migration status.
-            </summary>
-            <param name="migrationId">
-            Previously ran migration id.
-            </param>
-            <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> representing asynchronous operation.
-            </returns>
-        </member>
-        <member name="M:DataMigrationFramework.DefaultMigrationManager.CanStart(System.Guid)">
-            <summary>
-            Checks whether a migration can start or not.
+            Gets data migration reference if one already exists otherwise creates new one.
             </summary>
             <param name="id">
             Id of the migration.
             </param>
+            <param name="migrationTaskName">
+            Migration task name.
+            </param>
+            <param name="parameters">
+            Task parameters.
+            </param>
             <returns>
-            True if can because it does not exist or not running. False if one is already running.
+            A <see cref="T:DataMigrationFramework.IDataMigration"/> instance. Either a newly created one if does not exist or previously created one.
             </returns>
         </member>
         <member name="T:DataMigrationFramework.Extension.BuilderExtension">
@@ -259,14 +237,11 @@
             Gets current migration status.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.IDataMigration.StartAsync(System.Guid)">
+        <member name="M:DataMigrationFramework.IDataMigration.StartAsync">
             <summary>
             Starts the migration process.
             </summary>
             <returns>
-            <param name="id">
-            Id of the migration.
-            </param>
             A <see cref="T:System.Threading.Tasks.Task`1"/> object representing asynchronous operation. A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> will be returned as part of task object.
             </returns>
         </member>
@@ -342,14 +317,17 @@
             A <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="P:DataMigrationFramework.IMigrationFactory.Configuration"/> representing the data migration configuration.
             </returns>
         </member>
-        <member name="M:DataMigrationFramework.IMigrationFactory.Get(System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:DataMigrationFramework.IMigrationFactory.Get(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Get data migration reference for the given name.
             </summary>
             <remarks>
             Name is defined in the data migration configuration JSON file.
             </remarks>
-            <param name="name">
+            <param name="id">
+            Migration identifier.
+            </param>
+            <param name="migrationName">
             Name of the data migration defined in configuration file.
             </param>
             <param name="parameters">
@@ -364,43 +342,21 @@
             Manages the migration.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.IMigrationManager.StartAsync(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:DataMigrationFramework.IMigrationManager.Get(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
-            Starts migration with given unique id.
+            Gets data migration reference if one already exists otherwise creates new one.
             </summary>
-            <param name="migrationId">
-            Migration id which can be used for keep tracking the status.
+            <param name="id">
+            Id of the migration.
             </param>
-            <param name="name">
-            Name of the migration task.
+            <param name="migrationTaskName">
+            Migration task name.
             </param>
             <param name="parameters">
-            Migration task parameters.
+            Task parameters.
             </param>
             <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> representing asynchronous operation.
-            </returns>
-        </member>
-        <member name="M:DataMigrationFramework.IMigrationManager.StopAsync(System.Guid)">
-            <summary>
-            Stops existing running migration.
-            </summary>
-            <param name="migrationId">
-            Previously ran migration id.
-            </param>
-            <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> representing asynchronous operation.
-            </returns>
-        </member>
-        <member name="M:DataMigrationFramework.IMigrationManager.GetStatus(System.Guid)">
-            <summary>
-            Gets migration status.
-            </summary>
-            <param name="migrationId">
-            Previously ran migration id.
-            </param>
-            <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> representing asynchronous operation.
+            A <see cref="T:DataMigrationFramework.IDataMigration"/> instance. Either a newly created one if does not exist or previously created one.
             </returns>
         </member>
         <member name="T:DataMigrationFramework.ISource`1">
@@ -500,7 +456,7 @@
             <summary>
             Notifies the progress to observers.
             </summary>
-            <param name="status">
+            <param name="info">
             A <see cref="T:DataMigrationFramework.Model.MigrationInformation"/> info.
             </param>
         </member>

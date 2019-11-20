@@ -46,13 +46,14 @@ namespace DataMigrationFramework
         private readonly IDictionary<string, string> _parameters;
 
         /// <summary>
-        /// Migration id.
-        /// </summary>
-        private Guid _id;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="DefaultDataMigration{T}"/> class.
         /// </summary>
+        /// <param name="id">
+        /// Migration identifier.
+        /// </param>
+        /// <param name="name">
+        /// Migration name.
+        /// </param>
         /// <param name="source">
         /// A <see cref="ISource{T}"/> implementation of the source interface for the data.
         /// </param>
@@ -66,11 +67,20 @@ namespace DataMigrationFramework
         /// A <see cref="IDictionary{TKey,TValue}"/> parameters passed to source and destination references for runtime parameters.
         /// </param>
         public DefaultDataMigration(
+            Guid id,
+            string name,
             ISource<T> source,
             IDestination<T> destination,
             Settings settings,
             IDictionary<string, string> parameters)
         {
+            this.Id = id;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("name cannot be empty or null", nameof(name));
+            }
+
+            this.Name = name;
             this._source = source ?? throw new ArgumentNullException(nameof(source));
             this._destination = destination ?? throw new ArgumentNullException(nameof(destination));
             this._settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -81,6 +91,16 @@ namespace DataMigrationFramework
         }
 
         /// <summary>
+        /// Gets migration identifier.
+        /// </summary>
+        public Guid Id { get; private set; }
+
+        /// <summary>
+        /// Gets migration name.
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
         /// Gets current migration status.
         /// </summary>
         public MigrationStatus CurrentStatus { get; private set; }
@@ -89,14 +109,10 @@ namespace DataMigrationFramework
         /// Starts the migration process.
         /// </summary>
         /// <returns>
-        /// <param name="id">
-        /// Id of the migration.
-        /// </param>
         /// A <see cref="Task{T}"/> object representing asynchronous operation. A <see cref="MigrationStatus"/> will be returned as part of task object.
         /// </returns>
-        public async Task<MigrationStatus> StartAsync(Guid id)
+        public async Task<MigrationStatus> StartAsync()
         {
-            this._id = id;
             return await this.InternalStart();
         }
 
@@ -168,7 +184,7 @@ namespace DataMigrationFramework
                 }
                 catch (Exception e)
                 {
-                    this.FlagStatus(MigrationStatus.Completed);
+                    this.FlagStatus(MigrationStatus.Exception);
                     exception = e;
                 }
                 finally
@@ -206,7 +222,7 @@ namespace DataMigrationFramework
         /// </summary>
         private void Notify()
         {
-            this._monitor.Notify(new MigrationInformation(this._id, this.CurrentStatus));
+            this._monitor.Notify(new MigrationInformation(this.Id, this.CurrentStatus));
         }
     }
 }

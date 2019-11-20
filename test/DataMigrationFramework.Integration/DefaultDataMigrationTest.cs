@@ -30,6 +30,8 @@ namespace DataMigrationFramework.Integration
             // Act
             var dataAccess = new DataAccess(sourceFile, outputFile);
             await new DefaultDataMigration<Person>(
+                Guid.NewGuid(),
+                "testing",
                 new PersonFileSource(dataAccess),
                 new PersonFileDestination(dataAccess),
                 new Settings()
@@ -43,7 +45,7 @@ namespace DataMigrationFramework.Integration
                     {"inputFileName", sourceFile},
                     {"outputFileName", outputFile}
                 }
-                ).StartAsync(Guid.NewGuid());
+                ).StartAsync();
 
             // Assert
             File.Exists(outputFile).Should().BeTrue($"{outputFile} should have existed with migration process");

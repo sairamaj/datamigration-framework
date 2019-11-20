@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DataMigrationFramework.Model;
 
 namespace DataMigrationFramework
@@ -25,7 +26,10 @@ namespace DataMigrationFramework
         /// <remarks>
         /// Name is defined in the data migration configuration JSON file.
         /// </remarks>
-        /// <param name="name">
+        /// <param name="id">
+        /// Migration identifier.
+        /// </param>
+        /// <param name="migrationName">
         /// Name of the data migration defined in configuration file.
         /// </param>
         /// <param name="parameters">
@@ -34,6 +38,6 @@ namespace DataMigrationFramework
         /// <returns>
         /// A <see cref="IDataMigration"/> reference which can be used to start and stop the data migration.
         /// </returns>
-        IDataMigration Get(string name, IDictionary<string, string> parameters);
+        IDataMigration Get(Guid id, string migrationName, IDictionary<string, string> parameters);
     }
 }
