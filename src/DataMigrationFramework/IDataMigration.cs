@@ -9,6 +9,11 @@ namespace DataMigrationFramework
     public interface IDataMigration
     {
         /// <summary>
+        /// Gets current migration status.
+        /// </summary>
+        MigrationStatus CurrentStatus { get; }
+
+        /// <summary>
         /// Starts the migration process.
         /// </summary>
         /// <returns>

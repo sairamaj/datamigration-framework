@@ -11,14 +11,9 @@
         NotStarted,
 
         /// <summary>
-        /// In produce status.
+        /// Running state.
         /// </summary>
-        InProduce,
-
-        /// <summary>
-        /// In consume status.
-        /// </summary>
-        InConsume,
+        Running,
 
         /// <summary>
         /// Completed status.

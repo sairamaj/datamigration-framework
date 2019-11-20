@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="DataMigrationCreator.cs" />
     <Compile Include="DefaultDataMigrationTest.cs" />
+    <Compile Include="DefaultMigrationManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

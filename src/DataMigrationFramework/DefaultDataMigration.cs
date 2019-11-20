@@ -41,11 +41,6 @@ namespace DataMigrationFramework
         private readonly IDictionary<string, string> _parameters;
 
         /// <summary>
-        /// Current migration status.
-        /// </summary>
-        private MigrationStatus _currentStatus;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="DefaultDataMigration{T}"/> class.
         /// </summary>
         /// <param name="source">
@@ -72,6 +67,11 @@ namespace DataMigrationFramework
             this._cancellationToken = new CancellationTokenSource();
             this._parameters = parameters;
         }
+
+        /// <summary>
+        /// Gets current migration status.
+        /// </summary>
+        public MigrationStatus CurrentStatus { get; private set; }
 
         /// <summary>
         /// Start the data migration process.
@@ -142,15 +142,15 @@ namespace DataMigrationFramework
                 }
                 finally
                 {
-                    await this._source.CleanupAsync(this._currentStatus);
-                    await this._destination.CleanupAsync(this._currentStatus);
+                    await this._source.CleanupAsync(this.CurrentStatus);
+                    await this._destination.CleanupAsync(this.CurrentStatus);
                     if (exception != null)
                     {
                         tcs.SetException(exception);
                     }
                     else
                     {
-                        tcs.SetResult(this._currentStatus);
+                        tcs.SetResult(this.CurrentStatus);
                     }
                 }
             });
@@ -166,7 +166,7 @@ namespace DataMigrationFramework
         /// </param>
         private void FlagStatus(MigrationStatus status)
         {
-            this._currentStatus = status;
+            this.CurrentStatus = status;
         }
     }
 }
