@@ -12,6 +12,11 @@
             Type name corresponding to the data migration model which is shared by the <see cref="T:DataMigrationFramework.ISource`1"/> and <see cref="T:DataMigrationFramework.IDestination`1"/>.
             </typeparam>
         </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._monitor">
+            <summary>
+            Migration monitor.
+            </summary>
+        </member>
         <member name="F:DataMigrationFramework.DefaultDataMigration`1._source">
             <summary>
             Data migration source.
@@ -37,6 +42,11 @@
             Runtime parameters for source and destination.
             </summary>
         </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._id">
+            <summary>
+            Migration id.
+            </summary>
+        </member>
         <member name="M:DataMigrationFramework.DefaultDataMigration`1.#ctor(DataMigrationFramework.ISource{`0},DataMigrationFramework.IDestination{`0},DataMigrationFramework.Model.Settings,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Initializes a new instance of the <see cref="T:DataMigrationFramework.DefaultDataMigration`1"/> class.
@@ -59,12 +69,26 @@
             Gets current migration status.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.DefaultDataMigration`1.StartAsync">
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.StartAsync(System.Guid)">
             <summary>
-            Start the data migration process.
+            Starts the migration process.
             </summary>
             <returns>
-            A <see cref="T:System.Threading.Tasks.Task`1"/> representing asynchronous operation.
+            <param name="id">
+            Id of the migration.
+            </param>
+            A <see cref="T:System.Threading.Tasks.Task`1"/> object representing asynchronous operation. A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> will be returned as part of task object.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.Subscribe(System.IObserver{DataMigrationFramework.Model.MigrationInformation})">
+            <summary>
+            Subscribes to the process.
+            </summary>
+            <param name="observer">
+            A <see cref="T:System.IObserver`1"/> instance.
+            </param>
+            <returns>
+            A <see cref="T:System.IDisposable"/> where subscribers can unsubscribe.
             </returns>
         </member>
         <member name="M:DataMigrationFramework.DefaultDataMigration`1.StopAsync">
@@ -90,6 +114,11 @@
             <param name="status">
             A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> status.
             </param>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.Notify">
+            <summary>
+            Notifies to the observers.
+            </summary>
         </member>
         <member name="T:DataMigrationFramework.DefaultMigrationFactory">
             <summary>
@@ -230,11 +259,14 @@
             Gets current migration status.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.IDataMigration.StartAsync">
+        <member name="M:DataMigrationFramework.IDataMigration.StartAsync(System.Guid)">
             <summary>
             Starts the migration process.
             </summary>
             <returns>
+            <param name="id">
+            Id of the migration.
+            </param>
             A <see cref="T:System.Threading.Tasks.Task`1"/> object representing asynchronous operation. A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> will be returned as part of task object.
             </returns>
         </member>
@@ -448,6 +480,63 @@
             A <see cref="T:Autofac.ContainerBuilder"/> instance.
             </param>
         </member>
+        <member name="T:DataMigrationFramework.MigrationMonitor">
+            <summary>
+            Migration monitor helper class.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.MigrationMonitor.Subscribe(System.IObserver{DataMigrationFramework.Model.MigrationInformation})">
+            <summary>
+            Subscribe helper.
+            </summary>
+            <param name="observer">
+            A <see cref="T:System.IObserver`1"/> of <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> instance.
+            </param>
+            <returns>
+            A <see cref="T:System.IDisposable"/> where one can unsubscribe.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.MigrationMonitor.Notify(DataMigrationFramework.Model.MigrationInformation)">
+            <summary>
+            Notifies the progress to observers.
+            </summary>
+            <param name="status">
+            A <see cref="T:DataMigrationFramework.Model.MigrationInformation"/> info.
+            </param>
+        </member>
+        <member name="T:DataMigrationFramework.MigrationMonitor.UnSubscriber">
+            <summary>
+            un subscriber utility class.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.MigrationMonitor.UnSubscriber._observers">
+            <summary>
+            List of observers.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.MigrationMonitor.UnSubscriber._observer">
+            <summary>
+            Observer which will be removed.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.MigrationMonitor.UnSubscriber.#ctor(System.Collections.Generic.List{System.IObserver{DataMigrationFramework.Model.MigrationInformation}},System.IObserver{DataMigrationFramework.Model.MigrationInformation})">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.MigrationMonitor.UnSubscriber"/> class.
+            </summary>
+            <param name="observers">List of observers.</param>
+            <param name="observer">Observer to be removed.</param>
+        </member>
+        <member name="M:DataMigrationFramework.MigrationMonitor.UnSubscriber.Dispose">
+            <summary>
+            Disposes method.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.MigrationMonitor.UnSubscriber.Dispose(System.Boolean)">
+            <summary>
+            Dispose utility.
+            </summary>
+            <param name="isDisposing">true if disposing.</param>
+        </member>
         <member name="T:DataMigrationFramework.Model.Configuration">
             <summary>
             Configuration used for migration types.
@@ -537,6 +626,32 @@
             <returns>
             A <see cref="T:System.Type"/> from the assembly.
             </returns>
+        </member>
+        <member name="T:DataMigrationFramework.Model.MigrationInformation">
+            <summary>
+            Migration information.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.Model.MigrationInformation.#ctor(System.Guid,DataMigrationFramework.Model.MigrationStatus)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Model.MigrationInformation"/> class.
+            </summary>
+            <param name="id">
+            Migration id.
+            </param>
+            <param name="status">
+            A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> representing the status of migration.
+            </param>
+        </member>
+        <member name="P:DataMigrationFramework.Model.MigrationInformation.Id">
+            <summary>
+            Gets migration id.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.MigrationInformation.Status">
+            <summary>
+            Gets migration status.
+            </summary>
         </member>
         <member name="T:DataMigrationFramework.Model.MigrationStatus">
             <summary>

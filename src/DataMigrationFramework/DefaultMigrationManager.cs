@@ -56,7 +56,7 @@ namespace DataMigrationFramework
 
             var migration = this._factory.Get(name, parameters);
             this._dataMigrationsMap[migrationId] = migration;
-            await migration.StartAsync();
+            await migration.StartAsync(migrationId);
         }
 
         /// <summary>

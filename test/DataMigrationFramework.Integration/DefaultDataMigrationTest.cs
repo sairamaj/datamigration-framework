@@ -43,7 +43,7 @@ namespace DataMigrationFramework.Integration
                     {"inputFileName", sourceFile},
                     {"outputFileName", outputFile}
                 }
-                ).StartAsync();
+                ).StartAsync(Guid.NewGuid());
 
             // Assert
             File.Exists(outputFile).Should().BeTrue($"{outputFile} should have existed with migration process");

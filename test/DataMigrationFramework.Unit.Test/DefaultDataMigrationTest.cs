@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DataMigrationFramework.Model;
 using FluentAssertions;
 using NUnit.Framework;
@@ -15,7 +16,7 @@ namespace DataMigrationFramework.Unit.Test
             var migration = new DataMigrationCreator().DefaultDataMigration;
 
             // Act
-            var status = await migration.StartAsync();
+            var status = await migration.StartAsync(Guid.NewGuid());
 
             // Assert.
             status.Should().Be(MigrationStatus.Completed);
@@ -28,7 +29,7 @@ namespace DataMigrationFramework.Unit.Test
             var migration = new DataMigrationCreator().DefaultDataMigration;
 
             // Act
-            var task = migration.StartAsync();
+            var task = migration.StartAsync(Guid.NewGuid());
             await migration.StopAsync();
 
             var status = await task;

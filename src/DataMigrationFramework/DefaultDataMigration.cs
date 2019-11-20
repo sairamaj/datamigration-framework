@@ -16,6 +16,11 @@ namespace DataMigrationFramework
     public class DefaultDataMigration<T> : IDataMigration
     {
         /// <summary>
+        /// Migration monitor.
+        /// </summary>
+        private readonly MigrationMonitor _monitor;
+
+        /// <summary>
         /// Data migration source.
         /// </summary>
         private readonly ISource<T> _source;
@@ -41,6 +46,11 @@ namespace DataMigrationFramework
         private readonly IDictionary<string, string> _parameters;
 
         /// <summary>
+        /// Migration id.
+        /// </summary>
+        private Guid _id;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DefaultDataMigration{T}"/> class.
         /// </summary>
         /// <param name="source">
@@ -64,8 +74,10 @@ namespace DataMigrationFramework
             this._source = source ?? throw new ArgumentNullException(nameof(source));
             this._destination = destination ?? throw new ArgumentNullException(nameof(destination));
             this._settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            this._cancellationToken = new CancellationTokenSource();
             this._parameters = parameters;
+
+            this._cancellationToken = new CancellationTokenSource();
+            this._monitor = new MigrationMonitor();
         }
 
         /// <summary>
@@ -74,14 +86,32 @@ namespace DataMigrationFramework
         public MigrationStatus CurrentStatus { get; private set; }
 
         /// <summary>
-        /// Start the data migration process.
+        /// Starts the migration process.
         /// </summary>
         /// <returns>
-        /// A <see cref="Task{T}"/> representing asynchronous operation.
+        /// <param name="id">
+        /// Id of the migration.
+        /// </param>
+        /// A <see cref="Task{T}"/> object representing asynchronous operation. A <see cref="MigrationStatus"/> will be returned as part of task object.
         /// </returns>
-        public async Task<MigrationStatus> StartAsync()
+        public async Task<MigrationStatus> StartAsync(Guid id)
         {
+            this._id = id;
             return await this.InternalStart();
+        }
+
+        /// <summary>
+        /// Subscribes to the process.
+        /// </summary>
+        /// <param name="observer">
+        /// A <see cref="IObserver{T}"/> instance.
+        /// </param>
+        /// <returns>
+        /// A <see cref="IDisposable"/> where subscribers can unsubscribe.
+        /// </returns>
+        public IDisposable Subscribe(IObserver<MigrationInformation> observer)
+        {
+            return this._monitor.Subscribe(observer);
         }
 
         /// <summary>
@@ -110,6 +140,7 @@ namespace DataMigrationFramework
             new TaskFactory().StartNew(async () =>
             {
                 Exception exception = null;
+                this.FlagStatus(MigrationStatus.Running);
                 try
                 {
                     await this._source.PrepareAsync(this._parameters);
@@ -167,6 +198,15 @@ namespace DataMigrationFramework
         private void FlagStatus(MigrationStatus status)
         {
             this.CurrentStatus = status;
+            this.Notify();
+        }
+
+        /// <summary>
+        /// Notifies to the observers.
+        /// </summary>
+        private void Notify()
+        {
+            this._monitor.Notify(new MigrationInformation(this._id, this.CurrentStatus));
         }
     }
 }

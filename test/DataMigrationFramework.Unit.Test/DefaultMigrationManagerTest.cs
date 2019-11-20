@@ -27,7 +27,7 @@ namespace DataMigrationFramework.Unit.Test
             var mockDataMigration = MockRepository.GenerateMock<IDataMigration>();
             var parameters = new Dictionary<string, string>();
             mockFactory.Stub(factory => factory.Get("test", parameters)).Return(mockDataMigration);
-            mockDataMigration.Stub(migration => migration.StartAsync()).Return(Task.FromResult(MigrationStatus.Running));
+            mockDataMigration.Stub(migration => migration.StartAsync(id)).Return(Task.FromResult(MigrationStatus.Running));
             mockDataMigration.Stub(migration => migration.CurrentStatus).Return(MigrationStatus.Running);
             var manager = new DefaultMigrationManager(mockFactory);
             Func<Task> firstTask = async () =>
@@ -55,7 +55,7 @@ namespace DataMigrationFramework.Unit.Test
             var mockDataMigration = MockRepository.GenerateMock<IDataMigration>();
             var parameters = new Dictionary<string, string>();
             mockFactory.Stub(factory => factory.Get("test", parameters)).Return(mockDataMigration);
-            mockDataMigration.Stub(migration => migration.StartAsync()).Return(Task.FromResult(MigrationStatus.Running));
+            mockDataMigration.Stub(migration => migration.StartAsync(id)).Return(Task.FromResult(MigrationStatus.Running));
             mockDataMigration.Stub(migration => migration.CurrentStatus).Return(MigrationStatus.Running);
             var manager = new DefaultMigrationManager(mockFactory);
 
@@ -67,7 +67,7 @@ namespace DataMigrationFramework.Unit.Test
             await startTask();
 
             // Assert
-            mockDataMigration.AssertWasCalled(migration => migration.StartAsync());
+            mockDataMigration.AssertWasCalled(migration => migration.StartAsync(id));
         }
     }
 }

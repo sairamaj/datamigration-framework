@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using DataMigrationFramework.Console.Requests;
@@ -19,7 +18,11 @@ namespace DataMigrationFramework.Console.Handlers
         public Task<Guid> Handle(StartMigrationRequest request, CancellationToken cancellationToken)
         {
             var migration = _factory.Get(request.Name, request.Parameters);
-            migration.StartAsync();
+            migration.Subscribe(s =>
+            {
+                System.Console.WriteLine($"[Notification] {s.Id}: {s.Status}");
+            });
+            migration.StartAsync(Guid.NewGuid());
             return Task.FromResult(Guid.NewGuid());
         }
     }
