@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using DataMigrationFramework.Model;
 using DataMigrationFramework.Samples.Model;
@@ -22,9 +23,11 @@ namespace DataMigrationFramework.Samples
             return Task.FromResult(0);
         }
 
-        public async Task ConsumeAsync(IEnumerable<Person> persons)
+        public async Task<int> ConsumeAsync(IEnumerable<Person> persons)
         {
+            persons = persons.ToList();
             await this._dataAccess.SaveAsync(persons);
+            return persons.Count();
         }
 
         public Task CleanupAsync(MigrationStatus status)

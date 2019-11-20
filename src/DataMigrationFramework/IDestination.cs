@@ -36,7 +36,7 @@ namespace DataMigrationFramework
         /// <returns>
         /// The <see cref="Task{TREsult}"/> object representing the asynchronous operation.
         /// </returns>
-        Task ConsumeAsync(IEnumerable<T> items);
+        Task<int> ConsumeAsync(IEnumerable<T> items);
 
         /// <summary>
         /// Cleanup done after migration.

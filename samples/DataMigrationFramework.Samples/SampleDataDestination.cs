@@ -13,7 +13,7 @@ namespace DataMigrationFramework.Samples
             throw new NotImplementedException();
         }
 
-        public Task ConsumeAsync(IEnumerable<SampleData> items)
+        public Task<int> ConsumeAsync(IEnumerable<SampleData> items)
         {
             throw new NotImplementedException();
         }

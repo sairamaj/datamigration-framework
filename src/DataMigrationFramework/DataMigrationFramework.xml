@@ -42,6 +42,11 @@
             Runtime parameters for source and destination.
             </summary>
         </member>
+        <member name="F:DataMigrationFramework.DefaultDataMigration`1._statusCollector">
+            <summary>
+            Status collector.
+            </summary>
+        </member>
         <member name="M:DataMigrationFramework.DefaultDataMigration`1.#ctor(System.Guid,System.String,DataMigrationFramework.ISource{`0},DataMigrationFramework.IDestination{`0},DataMigrationFramework.Model.Settings,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Initializes a new instance of the <see cref="T:DataMigrationFramework.DefaultDataMigration`1"/> class.
@@ -78,6 +83,11 @@
         <member name="P:DataMigrationFramework.DefaultDataMigration`1.CurrentStatus">
             <summary>
             Gets current migration status.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.DefaultDataMigration`1.LastException">
+            <summary>
+            Gets last exception.
             </summary>
         </member>
         <member name="M:DataMigrationFramework.DefaultDataMigration`1.StartAsync">
@@ -210,6 +220,67 @@
             <returns>
             A <see cref="T:DataMigrationFramework.IDataMigration"/> instance. Either a newly created one if does not exist or previously created one.
             </returns>
+        </member>
+        <member name="T:DataMigrationFramework.Exceptions.ErrorThresholdReachedException">
+            <summary>
+            Represents error threshold exception.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.Exceptions.ErrorThresholdReachedException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Exceptions.ErrorThresholdReachedException"/> class.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.Exceptions.ErrorThresholdReachedException.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Exceptions.ErrorThresholdReachedException"/> class.
+            </summary>
+            <param name="message">
+            Exception message.
+            </param>
+            <param name="errorCount">
+            Error count.
+            </param>
+            <param name="errorThreshold">
+            Error threshold.
+            </param>
+        </member>
+        <member name="M:DataMigrationFramework.Exceptions.ErrorThresholdReachedException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Exceptions.ErrorThresholdReachedException"/> class.
+            </summary>
+            <param name="message">
+            Exception message.
+            </param>
+            <param name="inner">
+            A <see cref="T:System.Exception"/> inner exception.
+            </param>
+        </member>
+        <member name="M:DataMigrationFramework.Exceptions.ErrorThresholdReachedException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Exceptions.ErrorThresholdReachedException"/> class.
+            </summary>
+            <param name="info">
+            A <see cref="T:System.Runtime.Serialization.SerializationInfo"/> instance.
+            </param>
+            <param name="context">
+            A <see cref="T:System.Runtime.Serialization.StreamingContext"/> instance.
+            </param>
+        </member>
+        <member name="P:DataMigrationFramework.Exceptions.ErrorThresholdReachedException.Message">
+            <summary>
+            Gets message string.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Exceptions.ErrorThresholdReachedException.ErrorCount">
+            <summary>
+            Gets error count.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Exceptions.ErrorThresholdReachedException.ErrorThreshold">
+            <summary>
+            Gets error threshold count.
+            </summary>
         </member>
         <member name="T:DataMigrationFramework.Extension.BuilderExtension">
             <summary>
@@ -609,6 +680,21 @@
             Gets migration status.
             </summary>
         </member>
+        <member name="P:DataMigrationFramework.Model.MigrationInformation.LastException">
+            <summary>
+            Gets last exception.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.MigrationInformation.TotalRecordsProduced">
+            <summary>
+            Gets total records produced.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.MigrationInformation.CurrentErrorCount">
+            <summary>
+            Gets current error records count.
+            </summary>
+        </member>
         <member name="T:DataMigrationFramework.Model.MigrationStatus">
             <summary>
             Represents the migration status.
@@ -663,6 +749,70 @@
             <summary>
             Gets or sets number of errors where the migration process stops.
             </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Settings.NotifyStatusRecordSizeFrequency">
+            <summary>
+            Gets or sets notify status for every given number of records.
+            </summary>
+        </member>
+        <member name="T:DataMigrationFramework.StatusCollector">
+            <summary>
+            Collects the status of the migration process.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.StatusCollector._settings">
+            <summary>
+            Settings used for controlling.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.StatusCollector._previousDivision">
+            <summary>
+            Previous value.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.StatusCollector._totalRecords">
+            <summary>
+            Total count.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.StatusCollector._totalErrors">
+            <summary>
+            Total errors count.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.StatusCollector.#ctor(DataMigrationFramework.Model.Settings)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.StatusCollector"/> class.
+            </summary>
+            <param name="settings">
+            A <see cref="T:DataMigrationFramework.Model.Settings"/> used for controlling the process.
+            </param>
+        </member>
+        <member name="P:DataMigrationFramework.StatusCollector.TotalRecords">
+            <summary>
+            Gets total records count.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.StatusCollector.TotalErrors">
+            <summary>
+            Gets total errors count.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.StatusCollector.IsStatusNotify">
+            <summary>
+            Gets a value indicating whether status should be notified or not.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.StatusCollector.Update(System.Int32,System.Int32)">
+            <summary>
+            Updates record counts.
+            </summary>
+            <param name="currentCount">
+            Current record count.
+            </param>
+            <param name="errorCount">
+            Current error count.
+            </param>
         </member>
     </members>
 </doc>

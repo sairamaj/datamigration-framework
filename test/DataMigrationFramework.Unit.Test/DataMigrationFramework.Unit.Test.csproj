@@ -58,6 +58,7 @@
     <Compile Include="DefaultDataMigrationTest.cs" />
     <Compile Include="DefaultMigrationManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatusCollectorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

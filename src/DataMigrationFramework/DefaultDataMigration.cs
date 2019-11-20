@@ -46,6 +46,11 @@ namespace DataMigrationFramework
         private readonly IDictionary<string, string> _parameters;
 
         /// <summary>
+        /// Status collector.
+        /// </summary>
+        private readonly StatusCollector _statusCollector;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DefaultDataMigration{T}"/> class.
         /// </summary>
         /// <param name="id">
@@ -88,22 +93,28 @@ namespace DataMigrationFramework
 
             this._cancellationToken = new CancellationTokenSource();
             this._monitor = new MigrationMonitor();
+            this._statusCollector = new StatusCollector(this._settings);
         }
 
         /// <summary>
         /// Gets migration identifier.
         /// </summary>
-        public Guid Id { get; private set; }
+        public Guid Id { get; }
 
         /// <summary>
         /// Gets migration name.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets current migration status.
         /// </summary>
         public MigrationStatus CurrentStatus { get; private set; }
+
+        /// <summary>
+        /// Gets last exception.
+        /// </summary>
+        public Exception LastException { get; private set; }
 
         /// <summary>
         /// Starts the migration process.
@@ -166,12 +177,14 @@ namespace DataMigrationFramework
                     {
                         var items = await this._source.ProduceAsync(this._settings.BatchSize);
                         items = items.ToList();
-                        if (!items.Any())
+                        int currentProduced = items.Count();
+                        if (currentProduced == 0)
                         {
                             break;
                         }
 
-                        await this._destination.ConsumeAsync(items);
+                        var successCount = await this._destination.ConsumeAsync(items);
+                        this._statusCollector.Update(currentProduced, currentProduced- successCount);
                         await Task.Delay(this._settings.SleepBetweenMigration, this._cancellationToken.Token);
                     }
                     while (true);
@@ -184,6 +197,7 @@ namespace DataMigrationFramework
                 }
                 catch (Exception e)
                 {
+                    this.LastException = e;
                     this.FlagStatus(MigrationStatus.Exception);
                     exception = e;
                 }
@@ -222,7 +236,12 @@ namespace DataMigrationFramework
         /// </summary>
         private void Notify()
         {
-            this._monitor.Notify(new MigrationInformation(this.Id, this.CurrentStatus));
+            this._monitor.Notify(new MigrationInformation(this.Id, this.CurrentStatus)
+            {
+                LastException = this.LastException,
+                CurrentErrorCount = this._statusCollector.TotalErrors,
+                TotalRecordsProduced = this._statusCollector.TotalRecords,
+            });
         }
     }
 }

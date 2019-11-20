@@ -14,7 +14,7 @@ namespace DataMigrationFramework.Unit.Test
         {
             var mockSource = MockRepository.GenerateMock<ISource<string>>();
             var mockDestination = MockRepository.GenerateMock<IDestination<string>>();
-            var settings = new Settings() { BatchSize = 1 };
+            var settings = new Settings() { BatchSize = 1, ErrorThresholdBeforeExit = Int32.MaxValue};
             mockSource.Stub(source => source.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
             mockDestination.Stub(dest => dest.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
             mockSource.Stub(source => source.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DataMigrationFramework.Model
 {
@@ -33,5 +31,20 @@ namespace DataMigrationFramework.Model
         /// Gets migration status.
         /// </summary>
         public MigrationStatus Status { get; }
+
+        /// <summary>
+        /// Gets last exception.
+        /// </summary>
+        public Exception LastException { get; internal set; }
+
+        /// <summary>
+        /// Gets total records produced.
+        /// </summary>
+        public int TotalRecordsProduced { get; internal set; }
+
+        /// <summary>
+        /// Gets current error records count.
+        /// </summary>
+        public int CurrentErrorCount { get; internal set; }
     }
 }
