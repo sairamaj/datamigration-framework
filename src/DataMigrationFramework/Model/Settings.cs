@@ -5,7 +5,15 @@
     /// </summary>
     public class Settings
     {
+        /// <summary>
+        /// Record count frequency for notifications.
+        /// </summary>
         private int _notifyStatusRecordSizeFrequency;
+
+        /// <summary>
+        /// Record count limit.
+        /// </summary>
+        private int _maximumRecordsCountLimit;
 
         /// <summary>
         /// Gets default settings.
@@ -16,6 +24,7 @@
             SleepBetweenMigration = 10,
             ErrorThresholdBeforeExit = 10,
             NotifyStatusRecordSizeFrequency = 100,
+            MaxNumberOfRecords = 1000000,
         };
 
         /// <summary>
@@ -40,6 +49,15 @@
         {
             get => this._notifyStatusRecordSizeFrequency <= 0 ? 100 : this._notifyStatusRecordSizeFrequency;
             set => this._notifyStatusRecordSizeFrequency = value;
+        }
+
+        /// <summary>
+        /// Gets or sets notify status for every given number of records.
+        /// </summary>
+        public int MaxNumberOfRecords
+        {
+            get => this._maximumRecordsCountLimit <= 0 ? 1000000 : this._maximumRecordsCountLimit;
+            set => this._maximumRecordsCountLimit = value;
         }
     }
 }

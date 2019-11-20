@@ -8,33 +8,29 @@ using Rhino.Mocks;
 
 namespace DataMigrationFramework.Unit.Test
 {
-    internal class DataMigrationCreator
+    internal class DataMigrationCreator<T>
     {
-        public DataMigrationCreator()
+        public DataMigrationCreator(Settings settings)
         {
-            var mockSource = MockRepository.GenerateMock<ISource<string>>();
-            var mockDestination = MockRepository.GenerateMock<IDestination<string>>();
-            var settings = new Settings() { BatchSize = 1, ErrorThresholdBeforeExit = Int32.MaxValue};
-            mockSource.Stub(source => source.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
-            mockDestination.Stub(dest => dest.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
-            mockSource.Stub(source => source.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));
-            mockDestination.Stub(dest => dest.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));
-            mockSource.Stub(source => source.ProduceAsync(settings.BatchSize))
-                .Return(Task.FromResult<IEnumerable<string>>(new string[] { "item1" })).Repeat.Once();
-            mockSource.Stub(source => source.ProduceAsync(settings.BatchSize))
-                .Return(Task.FromResult<IEnumerable<string>>(new string[] { })).Repeat.Once();
-            mockDestination.Stub(dest => dest.ConsumeAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
+            this.MockSource = MockRepository.GenerateMock<ISource<T>>();
+            this.MockDestination = MockRepository.GenerateMock<IDestination<T>>();
+            this.MockSource.Stub(source => source.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
+            this.MockDestination.Stub(dest => dest.PrepareAsync(null)).IgnoreArguments().Return(Task.FromResult(0));
+            this.MockSource.Stub(source => source.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));
+            this.MockDestination.Stub(dest => dest.CleanupAsync(MigrationStatus.Completed)).IgnoreArguments().Return(Task.FromResult(0));
 
-            DefaultDataMigration = new DefaultDataMigration<string>(
+            DefaultDataMigration = new DefaultDataMigration<T>(
                 Guid.NewGuid(),
                 "testing",
-                mockSource,
-                mockDestination,
+                this.MockSource,
+                this.MockDestination,
                 settings,
                 new Dictionary<string, string>());
         }
 
 
         public IDataMigration DefaultDataMigration { get; }
+        public ISource<T> MockSource { get; }
+        public IDestination<T> MockDestination { get; }
     }
 }

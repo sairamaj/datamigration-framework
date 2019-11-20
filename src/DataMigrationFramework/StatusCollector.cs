@@ -69,6 +69,14 @@ namespace DataMigrationFramework
             this._totalErrors += errorCount;
             this._totalRecords += currentCount;
 
+            if (this.TotalRecords >= this._settings.MaxNumberOfRecords)
+            {
+                throw new MaxLimitReachedException(
+                    $"Max threshold reached and hence exiting.",
+                    this._totalRecords,
+                    this._settings.MaxNumberOfRecords);
+            }
+
             if (this._totalErrors >= this._settings.ErrorThresholdBeforeExit)
             {
                 throw new ErrorThresholdReachedException(

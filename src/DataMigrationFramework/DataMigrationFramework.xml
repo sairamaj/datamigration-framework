@@ -282,6 +282,67 @@
             Gets error threshold count.
             </summary>
         </member>
+        <member name="T:DataMigrationFramework.Exceptions.MaxLimitReachedException">
+            <summary>
+            Represents error threshold exception.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.Exceptions.MaxLimitReachedException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Exceptions.MaxLimitReachedException"/> class.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.Exceptions.MaxLimitReachedException.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Exceptions.MaxLimitReachedException"/> class.
+            </summary>
+            <param name="message">
+            Exception message.
+            </param>
+            <param name="currentRecordCount">
+            Current record count.
+            </param>
+            <param name="maxLimit">
+            Maximum limit value.
+            </param>
+        </member>
+        <member name="M:DataMigrationFramework.Exceptions.MaxLimitReachedException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Exceptions.MaxLimitReachedException"/> class.
+            </summary>
+            <param name="message">
+            Exception message.
+            </param>
+            <param name="inner">
+            A <see cref="T:System.Exception"/> inner exception.
+            </param>
+        </member>
+        <member name="M:DataMigrationFramework.Exceptions.MaxLimitReachedException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Exceptions.MaxLimitReachedException"/> class.
+            </summary>
+            <param name="info">
+            A <see cref="T:System.Runtime.Serialization.SerializationInfo"/> instance.
+            </param>
+            <param name="context">
+            A <see cref="T:System.Runtime.Serialization.StreamingContext"/> instance.
+            </param>
+        </member>
+        <member name="P:DataMigrationFramework.Exceptions.MaxLimitReachedException.Message">
+            <summary>
+            Gets message string.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Exceptions.MaxLimitReachedException.CurrentRecordCount">
+            <summary>
+            Gets error count.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Exceptions.MaxLimitReachedException.MaxLimit">
+            <summary>
+            Gets error threshold count.
+            </summary>
+        </member>
         <member name="T:DataMigrationFramework.Extension.BuilderExtension">
             <summary>
             Autofac builder extension.
@@ -730,6 +791,16 @@
             Settings used for migration process.
             </summary>
         </member>
+        <member name="F:DataMigrationFramework.Model.Settings._notifyStatusRecordSizeFrequency">
+            <summary>
+            Record count frequency for notifications.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.Model.Settings._maximumRecordsCountLimit">
+            <summary>
+            Record count limit.
+            </summary>
+        </member>
         <member name="P:DataMigrationFramework.Model.Settings.Default">
             <summary>
             Gets default settings.
@@ -751,6 +822,11 @@
             </summary>
         </member>
         <member name="P:DataMigrationFramework.Model.Settings.NotifyStatusRecordSizeFrequency">
+            <summary>
+            Gets or sets notify status for every given number of records.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Settings.MaxNumberOfRecords">
             <summary>
             Gets or sets notify status for every given number of records.
             </summary>
