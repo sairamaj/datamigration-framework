@@ -108,6 +108,5 @@ namespace DataMigrationFramework.Unit.Test
                 Console.WriteLine(e.Message);
             }
         }
-
     }
 }
