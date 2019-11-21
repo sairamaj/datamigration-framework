@@ -28,7 +28,7 @@ namespace DataMigrationFramework.Exceptions
         /// <param name="errorThreshold">
         /// Error threshold.
         /// </param>
-        public ErrorThresholdReachedException(string message,int errorCount, int errorThreshold)
+        public ErrorThresholdReachedException(string message, int errorCount, int errorThreshold)
             : base(message)
         {
             this.ErrorCount = errorCount;

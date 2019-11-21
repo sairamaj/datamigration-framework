@@ -204,9 +204,9 @@
             A <see cref="T:DataMigrationFramework.IMigrationFactory"/> used for creating the migration instances.
             </param>
         </member>
-        <member name="M:DataMigrationFramework.DefaultMigrationManager.Get(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:DataMigrationFramework.DefaultMigrationManager.Create(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
-            Gets data migration reference if one already exists otherwise creates new one.
+            Creates data migration reference if one does not exists, otherwise creates new one.
             </summary>
             <param name="id">
             Id of the migration.
@@ -219,6 +219,17 @@
             </param>
             <returns>
             A <see cref="T:DataMigrationFramework.IDataMigration"/> instance. Either a newly created one if does not exist or previously created one.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.DefaultMigrationManager.Get(System.Guid)">
+            <summary>
+            Gets existing data migration if one found.
+            </summary>
+            <param name="id">
+            Unique identifier.
+            </param>
+            <returns>
+            A <see cref="T:DataMigrationFramework.IDataMigration"/> instance if found, otherwise null.
             </returns>
         </member>
         <member name="T:DataMigrationFramework.Exceptions.ErrorThresholdReachedException">
@@ -474,9 +485,9 @@
             Manages the migration.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.IMigrationManager.Get(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:DataMigrationFramework.IMigrationManager.Create(System.Guid,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
-            Gets data migration reference if one already exists otherwise creates new one.
+            Creates data migration reference if one does not exists, otherwise creates new one.
             </summary>
             <param name="id">
             Id of the migration.
@@ -489,6 +500,17 @@
             </param>
             <returns>
             A <see cref="T:DataMigrationFramework.IDataMigration"/> instance. Either a newly created one if does not exist or previously created one.
+            </returns>
+        </member>
+        <member name="M:DataMigrationFramework.IMigrationManager.Get(System.Guid)">
+            <summary>
+            Gets existing data migration if one found.
+            </summary>
+            <param name="id">
+            Unique identifier.
+            </param>
+            <returns>
+            A <see cref="T:DataMigrationFramework.IDataMigration"/> instance if found, otherwise null.
             </returns>
         </member>
         <member name="T:DataMigrationFramework.ISource`1">

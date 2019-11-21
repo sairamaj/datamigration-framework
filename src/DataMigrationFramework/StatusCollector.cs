@@ -49,7 +49,6 @@ namespace DataMigrationFramework
         /// </summary>
         public int TotalErrors => this._totalErrors;
 
-
         /// <summary>
         /// Gets a value indicating whether status should be notified or not.
         /// </summary>

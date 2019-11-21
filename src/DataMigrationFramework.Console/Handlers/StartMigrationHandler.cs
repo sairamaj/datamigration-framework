@@ -18,7 +18,7 @@ namespace DataMigrationFramework.Console.Handlers
         public Task<Guid> Handle(StartMigrationRequest request, CancellationToken cancellationToken)
         {
             var id = Guid.NewGuid();
-            var migration = _manager.Get(id,  request.Name, request.Parameters);
+            var migration = _manager.Create(id,  request.Name, request.Parameters);
             migration.Subscribe(s =>
             {
                 System.Console.WriteLine($"[Notification] {s.Id}: {s.Status}");

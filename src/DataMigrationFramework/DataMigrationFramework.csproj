@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,6 +17,7 @@
     <RepositoryUrl>https://github.com/sairamaj/datamigration-framework</RepositoryUrl>
     <PackageTags>data migration</PackageTags>
     <PackageReleaseNotes>Initial version</PackageReleaseNotes>
+    <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
 </PropertyGroup>
 
   <ItemGroup>

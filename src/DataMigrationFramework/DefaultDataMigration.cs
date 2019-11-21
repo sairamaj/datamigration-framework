@@ -184,7 +184,12 @@ namespace DataMigrationFramework
                         }
 
                         var successCount = await this._destination.ConsumeAsync(items);
-                        this._statusCollector.Update(currentProduced, currentProduced- successCount);
+                        this._statusCollector.Update(currentProduced, currentProduced - successCount);
+                        if (this._statusCollector.IsStatusNotify)
+                        {
+                            this.Notify();
+                        }
+
                         await Task.Delay(this._settings.SleepBetweenMigration, this._cancellationToken.Token);
                     }
                     while (true);
