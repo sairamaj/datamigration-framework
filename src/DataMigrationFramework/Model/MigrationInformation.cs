@@ -43,8 +43,13 @@ namespace DataMigrationFramework.Model
         public int TotalRecordsProduced { get; internal set; }
 
         /// <summary>
+        /// Gets total records produced.
+        /// </summary>
+        public int TotalRecordsConsumed { get; internal set; }
+
+        /// <summary>
         /// Gets current error records count.
         /// </summary>
-        public int CurrentErrorCount { get; internal set; }
+        public int TotalErrorCount { get; internal set; }
     }
 }

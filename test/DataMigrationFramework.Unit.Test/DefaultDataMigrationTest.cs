@@ -97,7 +97,7 @@ namespace DataMigrationFramework.Unit.Test
         [Test]
         public async Task MigrationShouldRaiseNotifications()
         {
-            // Arrange
+            // Arrange+
             var settings = new Settings() { BatchSize = 1, ErrorThresholdBeforeExit = Int32.MaxValue };
             var creator = new DataMigrationCreator<string>(settings);
             IEnumerable<string> items = new List<string> { "test" };
@@ -117,7 +117,12 @@ namespace DataMigrationFramework.Unit.Test
             await migration.StartAsync();
 
             // Assert.
-            states.Should().BeEquivalentTo(new List<MigrationStatus> { MigrationStatus.Running, MigrationStatus.Completed });
+            states.Should().BeEquivalentTo(new List<MigrationStatus>
+            {
+                MigrationStatus.Starting,
+                MigrationStatus.Running,
+                MigrationStatus.Completed
+            });
         }
 
         [Test]
@@ -145,6 +150,7 @@ namespace DataMigrationFramework.Unit.Test
             // Assert.
             states.Should().BeEquivalentTo(new List<MigrationStatus>
             {
+                MigrationStatus.Starting,
                 MigrationStatus.Running,
                 MigrationStatus.Running,
                 MigrationStatus.Running,
@@ -177,9 +183,83 @@ namespace DataMigrationFramework.Unit.Test
             // Assert.
             states.Should().BeEquivalentTo(new List<MigrationStatus>
             {
+                MigrationStatus.Starting,
                 MigrationStatus.Running,
                 MigrationStatus.Exception
             });
+        }
+
+        [Test]
+        public void InitialStatusShouldBeInNotStarted()
+        {
+            // Arrange
+            var settings = new Settings() { BatchSize = 1, ErrorThresholdBeforeExit = Int32.MaxValue };
+            var creator = new DataMigrationCreator<string>(settings);
+
+            // Assert
+            creator.DefaultDataMigration.CurrentStatus.Should().Be(MigrationStatus.NotStarted);
+        }
+
+        [Test]
+        public async Task StatusShouldHaveOneStartingStatusWhenMigrationStarted()
+        {
+            // Arrange
+            var settings = new Settings() { BatchSize = 1, ErrorThresholdBeforeExit = Int32.MaxValue };
+            var creator = new DataMigrationCreator<string>(settings);
+            IEnumerable<string> empty = new List<string> { };
+            creator.MockSource.Stub(source => source.ProduceAsync(1)).Return(Task.FromResult(empty)).Repeat.Once();
+            var migration = creator.DefaultDataMigration;
+
+            var startingStatusCount = 0;
+            migration.Subscribe((info) =>
+            {
+                if (info.Status == MigrationStatus.Starting)
+                {
+                    startingStatusCount++;
+                }
+            });
+
+            // Act
+            await migration.StartAsync();
+
+            // Assert.
+            startingStatusCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task NumberOfRecordShouldBeAvailableOnCompletion()
+        {
+            // Arrange
+            var settings = new Settings() { BatchSize = 5, ErrorThresholdBeforeExit = Int32.MaxValue, MaxNumberOfRecords = 1000 };
+            var creator = new DataMigrationCreator<string>(settings);
+            IEnumerable<string> items = new List<string> { "test1", "test2", "test3", "test4", "test5" };
+            IEnumerable<string> empty = new List<string> { };
+            creator.MockSource.Stub(source => source.ProduceAsync(5)).Return(Task.FromResult(items)).Repeat.Once();
+            creator.MockSource.Stub(source => source.ProduceAsync(5)).Return(Task.FromResult(empty)).Repeat.Once();
+            var successCount = 3;
+            creator.MockDestination.Stub(source => source.ConsumeAsync(items)).Return(Task.FromResult(successCount));
+            var migration = creator.DefaultDataMigration;
+
+            var totalProduced = 0;
+            var totalConsumed = 0;
+            var totalErrors = 0;
+            migration.Subscribe((info) =>
+            {
+                if (info.Status == MigrationStatus.Completed)
+                {
+                    totalProduced = info.TotalRecordsProduced;
+                    totalConsumed = info.TotalRecordsConsumed;
+                    totalErrors = info.TotalErrorCount;
+                }
+            });
+
+            // Act
+            await migration.StartAsync();
+
+            // Assert
+            totalProduced.Should().Be(5);
+            totalConsumed.Should().Be(3);
+            totalErrors.Should().Be(2);
         }
     }
 }

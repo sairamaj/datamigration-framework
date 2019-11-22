@@ -773,7 +773,12 @@
             Gets total records produced.
             </summary>
         </member>
-        <member name="P:DataMigrationFramework.Model.MigrationInformation.CurrentErrorCount">
+        <member name="P:DataMigrationFramework.Model.MigrationInformation.TotalRecordsConsumed">
+            <summary>
+            Gets total records produced.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.MigrationInformation.TotalErrorCount">
             <summary>
             Gets current error records count.
             </summary>
@@ -786,6 +791,11 @@
         <member name="F:DataMigrationFramework.Model.MigrationStatus.NotStarted">
             <summary>
             Not started status.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.Model.MigrationStatus.Starting">
+            <summary>
+            Starting the process.
             </summary>
         </member>
         <member name="F:DataMigrationFramework.Model.MigrationStatus.Running">
@@ -868,9 +878,14 @@
             Previous value.
             </summary>
         </member>
-        <member name="F:DataMigrationFramework.StatusCollector._totalRecords">
+        <member name="F:DataMigrationFramework.StatusCollector._totalProduced">
             <summary>
-            Total count.
+            Total produced.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.StatusCollector._totalConsumed">
+            <summary>
+            Total produced.
             </summary>
         </member>
         <member name="F:DataMigrationFramework.StatusCollector._totalErrors">
@@ -886,9 +901,14 @@
             A <see cref="T:DataMigrationFramework.Model.Settings"/> used for controlling the process.
             </param>
         </member>
-        <member name="P:DataMigrationFramework.StatusCollector.TotalRecords">
+        <member name="P:DataMigrationFramework.StatusCollector.TotalProduced">
             <summary>
-            Gets total records count.
+            Gets total produced records count.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.StatusCollector.TotalConsumed">
+            <summary>
+            Gets total consumed records count.
             </summary>
         </member>
         <member name="P:DataMigrationFramework.StatusCollector.TotalErrors">
@@ -901,12 +921,15 @@
             Gets a value indicating whether status should be notified or not.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.StatusCollector.Update(System.Int32,System.Int32)">
+        <member name="M:DataMigrationFramework.StatusCollector.Update(System.Int32,System.Int32,System.Int32)">
             <summary>
             Updates record counts.
             </summary>
-            <param name="currentCount">
-            Current record count.
+            <param name="currentProduced">
+            Current produced record count.
+            </param>
+            <param name="currentConsumed">
+            Current consumed record count.
             </param>
             <param name="errorCount">
             Current error count.

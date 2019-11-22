@@ -7,7 +7,9 @@
     "settings": {
       "batchSize": 1,
       "sleepBetweenMigration": 2000,
-      "errorThresholdBeforeExit": 100
+      "errorThresholdBeforeExit": 100,
+      "notifyStatusRecordSizeFrequency": 100,
+      "maxNumberOfRecords":  100000 
     },
     "parameters": {
       "inputFileName": "",

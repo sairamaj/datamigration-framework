@@ -11,6 +11,11 @@
         NotStarted,
 
         /// <summary>
+        /// Starting the process.
+        /// </summary>
+        Starting,
+
+        /// <summary>
         /// Running state.
         /// </summary>
         Running,

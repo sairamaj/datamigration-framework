@@ -18,31 +18,31 @@ namespace DataMigrationFramework.Unit.Test
                 ErrorThresholdBeforeExit = 1000,
             });
 
-            evaluator.Update(1,1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeFalse();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeFalse();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeFalse();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeFalse();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeFalse();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeFalse();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
         }
-        
+
         [Test]
         public void StatusNotifyEvaluatorTest2()
         {
@@ -52,22 +52,22 @@ namespace DataMigrationFramework.Unit.Test
                 ErrorThresholdBeforeExit = 1000,
             });
 
-            evaluator.Update(5,1);
+            evaluator.Update(5, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeFalse();
 
-            evaluator.Update(1, 1);
+            evaluator.Update(1, 0, 1);
             evaluator.IsStatusNotify.Should().BeFalse();
 
-            evaluator.Update(10, 1);
+            evaluator.Update(10, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
 
-            evaluator.Update(15, 1);
+            evaluator.Update(15, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
 
-            evaluator.Update(20, 1);
+            evaluator.Update(20, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
         }
 
@@ -80,18 +80,18 @@ namespace DataMigrationFramework.Unit.Test
                 ErrorThresholdBeforeExit = 1000,
             });
 
-            evaluator.Update(4, 1);
+            evaluator.Update(4, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
-            evaluator.Update(4, 1);
-            evaluator.IsStatusNotify.Should().BeTrue();
-
-            evaluator.Update(4, 1);
+            evaluator.Update(4, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
 
-            evaluator.Update(4, 1);
+            evaluator.Update(4, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
 
-            evaluator.Update(4, 1);
+            evaluator.Update(4, 0, 1);
+            evaluator.IsStatusNotify.Should().BeTrue();
+
+            evaluator.Update(4, 0, 1);
             evaluator.IsStatusNotify.Should().BeTrue();
         }
 
@@ -103,11 +103,11 @@ namespace DataMigrationFramework.Unit.Test
                 ErrorThresholdBeforeExit = 10,
             });
 
-            statusCollector.Update(3,3);
-            statusCollector.Update(3, 3);
-            statusCollector.Update(3, 3);
+            statusCollector.Update(3, 0, 3);
+            statusCollector.Update(3, 0, 3);
+            statusCollector.Update(3, 0, 3);
 
-            Action updateWhichReachedLimit = () => statusCollector.Update(3, 3);
+            Action updateWhichReachedLimit = () => statusCollector.Update(3, 0, 3);
             updateWhichReachedLimit.Should().Throw<ErrorThresholdReachedException>().WithMessage("Error threshold reached and hence exiting.\r\nErrors: 12 Threshold: 10");
         }
     }

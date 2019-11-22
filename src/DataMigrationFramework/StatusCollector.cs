@@ -19,9 +19,14 @@ namespace DataMigrationFramework
         private int _previousDivision;
 
         /// <summary>
-        /// Total count.
+        /// Total produced.
         /// </summary>
-        private int _totalRecords;
+        private int _totalProduced;
+
+        /// <summary>
+        /// Total produced.
+        /// </summary>
+        private int _totalConsumed;
 
         /// <summary>
         /// Total errors count.
@@ -40,9 +45,14 @@ namespace DataMigrationFramework
         }
 
         /// <summary>
-        /// Gets total records count.
+        /// Gets total produced records count.
         /// </summary>
-        public int TotalRecords => this._totalRecords;
+        public int TotalProduced => this._totalProduced;
+
+        /// <summary>
+        /// Gets total consumed records count.
+        /// </summary>
+        public int TotalConsumed => this._totalConsumed;
 
         /// <summary>
         /// Gets total errors count.
@@ -57,22 +67,26 @@ namespace DataMigrationFramework
         /// <summary>
         /// Updates record counts.
         /// </summary>
-        /// <param name="currentCount">
-        /// Current record count.
+        /// <param name="currentProduced">
+        /// Current produced record count.
+        /// </param>
+        /// <param name="currentConsumed">
+        /// Current consumed record count.
         /// </param>
         /// <param name="errorCount">
         /// Current error count.
         /// </param>
-        public void Update(int currentCount, int errorCount)
+        public void Update(int currentProduced, int currentConsumed, int errorCount)
         {
             this._totalErrors += errorCount;
-            this._totalRecords += currentCount;
+            this._totalProduced += currentProduced;
+            this._totalConsumed += currentConsumed;
 
-            if (this.TotalRecords >= this._settings.MaxNumberOfRecords)
+            if (this.TotalProduced >= this._settings.MaxNumberOfRecords)
             {
                 throw new MaxLimitReachedException(
                     $"Max threshold reached and hence exiting.",
-                    this._totalRecords,
+                    this._totalProduced,
                     this._settings.MaxNumberOfRecords);
             }
 
@@ -84,7 +98,7 @@ namespace DataMigrationFramework
                     this._settings.ErrorThresholdBeforeExit);
             }
 
-            var curDivision = this._totalRecords / this._settings.NotifyStatusRecordSizeFrequency;
+            var curDivision = this._totalProduced / this._settings.NotifyStatusRecordSizeFrequency;
             if (curDivision <= this._previousDivision)
             {
                 this.IsStatusNotify = false;

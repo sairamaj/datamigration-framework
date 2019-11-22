@@ -71,7 +71,9 @@ Define a configuration file to wire up all source and destination
     "settings": {
       "batchSize": 1,
       "sleepBetweenMigration": 2000,
-      "errorThresholdBeforeExit": 100
+      "errorThresholdBeforeExit": 100,
+      "notifyStatusRecordSizeFrequency": 100,
+      "maxNumberOfRecords":  100000 
     },
     "parameters": {
       "inputFileName": "",
@@ -84,6 +86,7 @@ Define a configuration file to wire up all source and destination
     "destinationTypeName": "DataMigrationFramework.Samples.SampleDataDestination,DataMigrationFramework.Samples.dll",
     "ModelTypeName": "DataMigrationFramework.Samples.Model.SampleData,DataMigrationFramework.Samples.dll"
   }
+
 ]
 ```
 #### Step6 (Registering Autofac module)
@@ -95,7 +98,8 @@ Define a configuration file to wire up all source and destination
     // unique id through which one can get the status and stop the existing migration
     // Name of the migration task (should be one of value defined in configuration)
     // Parameters which will be passed to source and destination (through PrepareAsync method).
-    _manager.Create(uniqueId,  "personDataMigration", new Dictionary<string,string>{});
+    var migrationTask = _manager.Create(uniqueId,  "personDataMigration", new Dictionary<string,string>{});
+    await migrationTask.StartAsync();
 ```
 
 ### Samples

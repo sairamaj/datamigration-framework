@@ -94,6 +94,7 @@ namespace DataMigrationFramework
             this._cancellationToken = new CancellationTokenSource();
             this._monitor = new MigrationMonitor();
             this._statusCollector = new StatusCollector(this._settings);
+            this.CurrentStatus = MigrationStatus.NotStarted;
         }
 
         /// <summary>
@@ -167,9 +168,10 @@ namespace DataMigrationFramework
             new TaskFactory().StartNew(async () =>
             {
                 Exception exception = null;
-                this.FlagStatus(MigrationStatus.Running);
+                this.FlagStatus(MigrationStatus.Starting);
                 try
                 {
+                    this.FlagStatus(MigrationStatus.Running);
                     await this._source.PrepareAsync(this._parameters);
                     await this._destination.PrepareAsync(this._parameters);
 
@@ -184,7 +186,7 @@ namespace DataMigrationFramework
                         }
 
                         var successCount = await this._destination.ConsumeAsync(items);
-                        this._statusCollector.Update(currentProduced, currentProduced - successCount);
+                        this._statusCollector.Update(currentProduced, successCount, currentProduced - successCount);
                         if (this._statusCollector.IsStatusNotify)
                         {
                             this.Notify();
@@ -244,8 +246,9 @@ namespace DataMigrationFramework
             this._monitor.Notify(new MigrationInformation(this.Id, this.CurrentStatus)
             {
                 LastException = this.LastException,
-                CurrentErrorCount = this._statusCollector.TotalErrors,
-                TotalRecordsProduced = this._statusCollector.TotalRecords,
+                TotalErrorCount = this._statusCollector.TotalErrors,
+                TotalRecordsProduced = this._statusCollector.TotalProduced,
+                TotalRecordsConsumed = this._statusCollector.TotalConsumed,
             });
         }
     }
