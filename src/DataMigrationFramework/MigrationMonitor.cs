@@ -36,15 +36,7 @@ namespace DataMigrationFramework
         {
             foreach (var observer in this._observers)
             {
-                try
-                {
-                    observer.OnNext(info);
-                }
-                catch (Exception e)
-                {
-                    // Ignore observers exception.
-                    Console.WriteLine(e);
-                }
+                observer.OnNext(info);
             }
         }
 

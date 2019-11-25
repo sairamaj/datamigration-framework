@@ -90,6 +90,11 @@
             Gets last exception.
             </summary>
         </member>
+        <member name="P:DataMigrationFramework.DefaultDataMigration`1.CurrentMigrationInformation">
+            <summary>
+            Gets current migration information.
+            </summary>
+        </member>
         <member name="M:DataMigrationFramework.DefaultDataMigration`1.StartAsync">
             <summary>
             Starts the migration process.
@@ -742,7 +747,7 @@
             Migration information.
             </summary>
         </member>
-        <member name="M:DataMigrationFramework.Model.MigrationInformation.#ctor(System.Guid,DataMigrationFramework.Model.MigrationStatus)">
+        <member name="M:DataMigrationFramework.Model.MigrationInformation.#ctor(System.Guid,DataMigrationFramework.Model.MigrationStatus,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Initializes a new instance of the <see cref="T:DataMigrationFramework.Model.MigrationInformation"/> class.
             </summary>
@@ -751,6 +756,9 @@
             </param>
             <param name="status">
             A <see cref="T:DataMigrationFramework.Model.MigrationStatus"/> representing the status of migration.
+            </param>
+            <param name="parameters">
+            A <see cref="T:System.Collections.Generic.IDictionary`2"/> migration parameters.
             </param>
         </member>
         <member name="P:DataMigrationFramework.Model.MigrationInformation.Id">
@@ -761,6 +769,11 @@
         <member name="P:DataMigrationFramework.Model.MigrationInformation.Status">
             <summary>
             Gets migration status.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.MigrationInformation.Parameters">
+            <summary>
+            Gets migration parameters.
             </summary>
         </member>
         <member name="P:DataMigrationFramework.Model.MigrationInformation.LastException">

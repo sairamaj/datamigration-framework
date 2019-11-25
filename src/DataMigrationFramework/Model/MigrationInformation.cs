@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DataMigrationFramework.Model
 {
@@ -16,10 +17,14 @@ namespace DataMigrationFramework.Model
         /// <param name="status">
         /// A <see cref="MigrationStatus"/> representing the status of migration.
         /// </param>
-        public MigrationInformation(Guid id, MigrationStatus status)
+        /// <param name="parameters">
+        /// A <see cref="IDictionary{TKey,TValue}"/> migration parameters.
+        /// </param>
+        public MigrationInformation(Guid id, MigrationStatus status, IDictionary<string, string> parameters)
         {
             this.Id = id;
             this.Status = status;
+            this.Parameters = parameters;
         }
 
         /// <summary>
@@ -31,6 +36,11 @@ namespace DataMigrationFramework.Model
         /// Gets migration status.
         /// </summary>
         public MigrationStatus Status { get; }
+
+        /// <summary>
+        /// Gets migration parameters.
+        /// </summary>
+        public IDictionary<string, string> Parameters { get; }
 
         /// <summary>
         /// Gets last exception.

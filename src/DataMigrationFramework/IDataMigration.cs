@@ -20,7 +20,7 @@ namespace DataMigrationFramework
         /// <returns>
         /// A <see cref="Task{T}"/> object representing asynchronous operation. A <see cref="MigrationStatus"/> will be returned as part of task object.
         /// </returns>
-        Task<MigrationStatus> StartAsync();
+        Task<MigrationInformation> StartAsync();
 
         /// <summary>
         /// Stop the current running migration process.

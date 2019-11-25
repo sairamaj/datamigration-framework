@@ -27,10 +27,10 @@ namespace DataMigrationFramework.Unit.Test
             
 
             // Act
-            var status = await migration.StartAsync();
+            var result = await migration.StartAsync();
 
             // Assert.
-            status.Should().Be(MigrationStatus.Completed);
+            result.Status.Should().Be(MigrationStatus.Completed);
         }
 
         [Test]
@@ -48,9 +48,9 @@ namespace DataMigrationFramework.Unit.Test
             var task = migration.StartAsync();
             await migration.StopAsync();
 
-            var status = await task;
+            var result = await task;
             // Assert.
-            status.Should().Be(MigrationStatus.Cancelled);
+            result.Status.Should().Be(MigrationStatus.Cancelled);
         }
 
         [Test]
@@ -69,10 +69,12 @@ namespace DataMigrationFramework.Unit.Test
 
 
             // Act
-            Func<Task<MigrationStatus>> startAsync = async () => await migration.StartAsync();
+            var info = await migration.StartAsync();
 
             // Assert
-            await startAsync.Should().ThrowAsync<ErrorThresholdReachedException>().WithMessage("Error threshold reached and hence exiting.\r\nErrors: 2 Threshold: 2");
+            info.Status.Should().Be(MigrationStatus.Exception);
+            info.LastException.Should().BeOfType<ErrorThresholdReachedException>();
+            info.LastException.Message.Should().Be("Error threshold reached and hence exiting.\r\nErrors: 2 Threshold: 2");
         }
 
         [Test]
@@ -88,10 +90,12 @@ namespace DataMigrationFramework.Unit.Test
             var migration = creator.DefaultDataMigration;
 
             // Act
-            Func<Task<MigrationStatus>> startAsync = async () => await migration.StartAsync();
+            var info = await migration.StartAsync();
 
             // Assert
-            await startAsync.Should().ThrowAsync<MaxLimitReachedException>().WithMessage("Max threshold reached and hence exiting.\r\nCurrent: 10 MaxLimit: 10");
+            info.Status.Should().Be(MigrationStatus.Exception);
+            info.LastException.Should().BeOfType<MaxLimitReachedException>();
+            info.LastException.Message.Should().Be("Max threshold reached and hence exiting.\r\nCurrent: 10 MaxLimit: 10");
         }
 
         [Test]
@@ -177,15 +181,13 @@ namespace DataMigrationFramework.Unit.Test
             });
 
             // Act
-            Func<Task> func = async () => await migration.StartAsync();
-            await func.Should().ThrowAsync<Exception>();
+            var result = await migration.StartAsync();
 
             // Assert.
+            result.Status.Should().Be(MigrationStatus.Exception);
             states.Should().BeEquivalentTo(new List<MigrationStatus>
             {
-                MigrationStatus.Starting,
-                MigrationStatus.Running,
-                MigrationStatus.Exception
+                MigrationStatus.Starting, MigrationStatus.Running, MigrationStatus.Exception
             });
         }
 
@@ -260,6 +262,25 @@ namespace DataMigrationFramework.Unit.Test
             totalProduced.Should().Be(5);
             totalConsumed.Should().Be(3);
             totalErrors.Should().Be(2);
+        }
+
+        [Test]
+        public async Task ObserverThrowingExceptionShouldBeReturnedAsMigrationInformationWithException()
+        {
+            // Arrange
+            var settings = new Settings() { BatchSize = 1, ErrorThresholdBeforeExit = Int32.MaxValue };
+            var creator = new DataMigrationCreator<string>(settings);
+            IEnumerable<string> empty = new List<string> { };
+            creator.MockSource.Stub(source => source.ProduceAsync(1)).Return(Task.FromResult(empty)).Repeat.Once();
+            var migration = creator.DefaultDataMigration;
+
+            migration.Subscribe((info) => throw new Exception($"Observer throwing exception..."));
+
+            // Act
+            var result = await migration.StartAsync();
+
+            // Assert.
+            result.Status.Should().Be(MigrationStatus.Exception);
         }
     }
 }

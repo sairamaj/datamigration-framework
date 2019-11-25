@@ -118,12 +118,23 @@ namespace DataMigrationFramework
         public Exception LastException { get; private set; }
 
         /// <summary>
+        /// Gets current migration information.
+        /// </summary>
+        private MigrationInformation CurrentMigrationInformation => new MigrationInformation(this.Id, this.CurrentStatus, this._parameters)
+        {
+            LastException = this.LastException,
+            TotalErrorCount = this._statusCollector.TotalErrors,
+            TotalRecordsProduced = this._statusCollector.TotalProduced,
+            TotalRecordsConsumed = this._statusCollector.TotalConsumed,
+        };
+
+        /// <summary>
         /// Starts the migration process.
         /// </summary>
         /// <returns>
         /// A <see cref="Task{T}"/> object representing asynchronous operation. A <see cref="MigrationStatus"/> will be returned as part of task object.
         /// </returns>
-        public async Task<MigrationStatus> StartAsync()
+        public async Task<MigrationInformation> StartAsync()
         {
             return await this.InternalStart();
         }
@@ -162,15 +173,14 @@ namespace DataMigrationFramework
         /// <returns>
         /// A <see cref="Task{T}"/> representing the asynchronous operation.
         /// </returns>
-        private Task<MigrationStatus> InternalStart()
+        private Task<MigrationInformation> InternalStart()
         {
-            TaskCompletionSource<MigrationStatus> tcs = new TaskCompletionSource<MigrationStatus>();
+            TaskCompletionSource<MigrationInformation> tcs = new TaskCompletionSource<MigrationInformation>();
             new TaskFactory().StartNew(async () =>
             {
-                Exception exception = null;
-                this.FlagStatus(MigrationStatus.Starting);
                 try
                 {
+                    this.FlagStatus(MigrationStatus.Starting);
                     this.FlagStatus(MigrationStatus.Running);
                     await this._source.PrepareAsync(this._parameters);
                     await this._destination.PrepareAsync(this._parameters);
@@ -206,20 +216,12 @@ namespace DataMigrationFramework
                 {
                     this.LastException = e;
                     this.FlagStatus(MigrationStatus.Exception);
-                    exception = e;
                 }
                 finally
                 {
                     await this._source.CleanupAsync(this.CurrentStatus);
                     await this._destination.CleanupAsync(this.CurrentStatus);
-                    if (exception != null)
-                    {
-                        tcs.SetException(exception);
-                    }
-                    else
-                    {
-                        tcs.SetResult(this.CurrentStatus);
-                    }
+                    tcs.SetResult(this.CurrentMigrationInformation);
                 }
             });
 
@@ -243,13 +245,7 @@ namespace DataMigrationFramework
         /// </summary>
         private void Notify()
         {
-            this._monitor.Notify(new MigrationInformation(this.Id, this.CurrentStatus)
-            {
-                LastException = this.LastException,
-                TotalErrorCount = this._statusCollector.TotalErrors,
-                TotalRecordsProduced = this._statusCollector.TotalProduced,
-                TotalRecordsConsumed = this._statusCollector.TotalConsumed,
-            });
+            this._monitor.Notify(this.CurrentMigrationInformation);
         }
     }
 }

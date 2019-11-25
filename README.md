@@ -102,6 +102,16 @@ Define a configuration file to wire up all source and destination
     await migrationTask.StartAsync();
 ```
 
+### Coniguration
+| Name                                      |  Description                                       | Default  |
+|------------------------------------------|----------------------------------------------------|----------|
+| BatchSize                                |  Number of items produced by the source            |   5      | 
+| DelayBetweenBatches                      |  Delay between each batch produce (throttling)     |   10(ms) | 
+| ErrorThresholdBeforeExit                 |  Errors allowed before migration terminated        |   10     | 
+| MaxNumberOfRecords                       |  Maximum records allowed in migration              | 1000000  | 
+| NotifyStatusRecordSizeFrequency          |  Notifications freqency to notify observers        |   100    | 
+
+
 ### Samples
 See the samples which does person data migration from file to file.
 
