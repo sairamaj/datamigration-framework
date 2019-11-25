@@ -1,4 +1,4 @@
-# datamigration-framwork ( work in progress)
+# datamigration-framework ( work in progress)
 
 Any data migration needs to get data from a __source__ and move to __destination__. Along the way it needs some throttling ( when running in production not to consume the resources) and some features like monitoring , stop and start the process etc. This framework written to take care of all other features 
 
