@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 
 namespace DataMigrationFramework.Model
@@ -120,7 +121,8 @@ namespace DataMigrationFramework.Model
         private static Type ParseForType(string typeName)
         {
             var parts = typeName.Split(',');
-            var asm = Assembly.LoadFrom(parts[1]);
+            var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, parts[1]);
+            var asm = Assembly.LoadFrom(fullPath);
             return asm.GetType(parts[0], true);
         }
     }
