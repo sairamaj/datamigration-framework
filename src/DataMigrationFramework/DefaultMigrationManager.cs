@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ namespace DataMigrationFramework
         /// <summary>
         /// Data migration map.
         /// </summary>
-        private readonly IDictionary<Guid, IDataMigration> _dataMigrationsMap = new ConcurrentDictionary<Guid, IDataMigration>();
+        private readonly LimitedSizeDictionary<Guid, IDataMigration> _dataMigrationsMap;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultMigrationManager"/> class.
@@ -28,6 +29,10 @@ namespace DataMigrationFramework
         public DefaultMigrationManager(IMigrationFactory factory)
         {
             this._factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this._dataMigrationsMap = new LimitedSizeDictionary<Guid, IDataMigration>(
+                100,
+                10,
+                Comparer<Guid>.Create((x, y) => x.CompareTo(y)));
         }
 
         /// <summary>
@@ -47,13 +52,13 @@ namespace DataMigrationFramework
         /// </returns>
         public IDataMigration Create(Guid id, string migrationTaskName, IDictionary<string, string> parameters)
         {
-            if (this._dataMigrationsMap.TryGetValue(id, out IDataMigration val))
+            if (this._dataMigrationsMap.Dictionary.TryGetValue(id, out IDataMigration val))
             {
                 return val;
             }
 
             var migration = this._factory.Get(id, migrationTaskName, parameters);
-            this._dataMigrationsMap[id] = migration;
+            this._dataMigrationsMap.Add(new KeyValuePair<Guid, IDataMigration>(id, migration));
             return migration;
         }
 
@@ -68,12 +73,26 @@ namespace DataMigrationFramework
         /// </returns>
         public IDataMigration Get(Guid id)
         {
-            if (this._dataMigrationsMap.TryGetValue(id, out IDataMigration val))
+            if (this._dataMigrationsMap.Dictionary.TryGetValue(id, out IDataMigration val))
             {
                 return val;
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Remove the existing.
+        /// </summary>
+        /// <param name="id">
+        /// Unique identifier identifying the existing item.
+        /// </param>
+        public void Remove(Guid id)
+        {
+            if (this._dataMigrationsMap.Dictionary.TryGetValue(id, out IDataMigration val))
+            {
+                this._dataMigrationsMap.Remove(id);
+            }
         }
     }
 }

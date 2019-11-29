@@ -7,7 +7,7 @@ namespace DataMigrationFramework
     /// <summary>
     /// Interface defining the data migration.
     /// </summary>
-    public interface IDataMigration : IObservable<MigrationInformation>
+    public interface IDataMigration : IObservable<MigrationInformation>, IDisposable
     {
         /// <summary>
         /// Gets current migration status.

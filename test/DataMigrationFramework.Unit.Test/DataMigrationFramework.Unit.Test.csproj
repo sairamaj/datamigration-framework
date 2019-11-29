@@ -191,6 +191,7 @@
     <Compile Include="DataMigrationCreator.cs" />
     <Compile Include="DefaultDataMigrationTest.cs" />
     <Compile Include="DefaultMigrationManagerTest.cs" />
+    <Compile Include="LimitedSizeDictionaryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatusCollectorTest.cs" />
   </ItemGroup>

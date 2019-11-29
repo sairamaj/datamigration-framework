@@ -51,6 +51,11 @@ namespace DataMigrationFramework
         private readonly StatusCollector _statusCollector;
 
         /// <summary>
+        /// Flag for keeping disposed or not.
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DefaultDataMigration{T}"/> class.
         /// </summary>
         /// <param name="id">
@@ -168,6 +173,15 @@ namespace DataMigrationFramework
         }
 
         /// <summary>
+        /// Disposes the used resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
         /// Starts the migration process.
         /// </summary>
         /// <returns>
@@ -182,6 +196,7 @@ namespace DataMigrationFramework
                 {
                     this.FlagStatus(MigrationStatus.Starting);
                     this.FlagStatus(MigrationStatus.Running);
+                    this.CurrentMigrationInformation.DateStart = DateTime.Now;
                     await this._source.PrepareAsync(this._parameters);
                     await this._destination.PrepareAsync(this._parameters);
 
@@ -202,7 +217,7 @@ namespace DataMigrationFramework
                             this.Notify();
                         }
 
-                        await Task.Delay(this._settings.SleepBetweenMigration, this._cancellationToken.Token);
+                        await Task.Delay(this._settings.DelayBetweenBatches, this._cancellationToken.Token);
                     }
                     while (true);
 
@@ -219,8 +234,10 @@ namespace DataMigrationFramework
                 }
                 finally
                 {
+                    this.CurrentMigrationInformation.DateEnd = DateTime.Now;
                     await this._source.CleanupAsync(this.CurrentStatus);
                     await this._destination.CleanupAsync(this.CurrentStatus);
+                    this.Dispose();
                     tcs.SetResult(this.CurrentMigrationInformation);
                 }
             });
@@ -246,6 +263,22 @@ namespace DataMigrationFramework
         private void Notify()
         {
             this._monitor.Notify(this.CurrentMigrationInformation);
+        }
+
+        /// <summary>
+        /// Dispose method.
+        /// </summary>
+        /// <param name="isDisposing">
+        /// Flag to indicate whether it is coming through dispose.
+        /// </param>
+        private void Dispose(bool isDisposing)
+        {
+            if (isDisposing && !this._disposed)
+            {
+                this._cancellationToken?.Dispose();
+                this._monitor.Dispose();
+                this._disposed = true;
+            }
         }
     }
 }

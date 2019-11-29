@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using DataMigrationFramework.Model;
 
 namespace DataMigrationFramework
@@ -7,9 +8,22 @@ namespace DataMigrationFramework
     /// <summary>
     /// Migration monitor helper class.
     /// </summary>
-    internal class MigrationMonitor
+    internal class MigrationMonitor : IDisposable
     {
+        /// <summary>
+        /// List of observers for notification.
+        /// </summary>
         private readonly List<IObserver<MigrationInformation>> _observers = new List<IObserver<MigrationInformation>>();
+
+        /// <summary>
+        /// Un subscribers are maintained to cleanup upon dispose.
+        /// </summary>
+        private readonly List<UnSubscriber> _unSubscribers = new List<UnSubscriber>();
+
+        /// <summary>
+        /// Flag for keeping track of disposed or not.
+        /// </summary>
+        private bool _disposed;
 
         /// <summary>
         /// Subscribe helper.
@@ -23,7 +37,11 @@ namespace DataMigrationFramework
         public IDisposable Subscribe(IObserver<MigrationInformation> observer)
         {
             this._observers.Add(observer);
-            return new UnSubscriber(this._observers, observer);
+            var unSubscriber = new UnSubscriber(this._observers, observer);
+
+            // add to our list and in case client does not dispose we will dispose through this list.
+            this._unSubscribers.Add(unSubscriber);
+            return unSubscriber;
         }
 
         /// <summary>
@@ -37,6 +55,34 @@ namespace DataMigrationFramework
             foreach (var observer in this._observers)
             {
                 observer.OnNext(info);
+            }
+        }
+
+        /// <summary>
+        /// Disposes the internals.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes the unSubscribers.
+        /// </summary>
+        /// <param name="disposing">
+        /// Flag to see that we are disposing.
+        /// </param>
+        private void Dispose(bool disposing)
+        {
+            if (disposing && !this._disposed)
+            {
+                foreach (var unSubscriber in this._unSubscribers)
+                {
+                    unSubscriber.Dispose();
+                }
+
+                this._disposed = true;
             }
         }
 
@@ -80,10 +126,12 @@ namespace DataMigrationFramework
             /// <param name="isDisposing">true if disposing.</param>
             private void Dispose(bool isDisposing)
             {
+                Trace.WriteLine($"[memory] MigrationMonitor Dispose.");
                 if (isDisposing)
                 {
                     if (this._observer != null)
                     {
+                        Trace.WriteLine($"[memory] Removing the observer.");
                         this._observers.Remove(this._observer);
                         this._observer = null;
                     }

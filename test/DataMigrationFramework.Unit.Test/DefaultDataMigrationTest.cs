@@ -37,7 +37,7 @@ namespace DataMigrationFramework.Unit.Test
         public async Task MigrationCancelledShouldBeInCancelledState()
         {
             // Arrange
-            var settings = new Settings() { BatchSize = 1, ErrorThresholdBeforeExit = Int32.MaxValue, SleepBetweenMigration = 10};
+            var settings = new Settings() { BatchSize = 1, ErrorThresholdBeforeExit = Int32.MaxValue, DelayBetweenBatches = 10};
             var creator = new DataMigrationCreator<string>(settings);
             IEnumerable<string> items = new List<string> { "test" };
             creator.MockSource.Stub(source => source.ProduceAsync(1)).Return(Task.FromResult(items));

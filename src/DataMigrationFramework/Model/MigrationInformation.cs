@@ -28,6 +28,16 @@ namespace DataMigrationFramework.Model
         }
 
         /// <summary>
+        /// Gets date time started the migration.
+        /// </summary>
+        public DateTime DateStart { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets date time ended the migration.
+        /// </summary>
+        public DateTime DateEnd { get; internal set; }
+
+        /// <summary>
         /// Gets migration id.
         /// </summary>
         public Guid Id { get; }

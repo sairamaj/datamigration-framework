@@ -21,7 +21,7 @@
         public static Settings Default => new Settings()
         {
             BatchSize = 5,
-            SleepBetweenMigration = 10,
+            DelayBetweenBatches = 10,
             ErrorThresholdBeforeExit = 10,
             NotifyStatusRecordSizeFrequency = 100,
             MaxNumberOfRecords = 1000000,
@@ -33,9 +33,9 @@
         public int BatchSize { get; set; }
 
         /// <summary>
-        /// Gets or sets sleep time between migration in milliseconds.
+        /// Gets or sets delay time between batches in milliseconds.
         /// </summary>
-        public int SleepBetweenMigration { get; set; }
+        public int DelayBetweenBatches { get; set; }
 
         /// <summary>
         /// Gets or sets number of errors where the migration process stops.

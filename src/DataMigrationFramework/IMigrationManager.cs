@@ -35,5 +35,13 @@ namespace DataMigrationFramework
         /// A <see cref="IDataMigration"/> instance if found, otherwise null.
         /// </returns>
         IDataMigration Get(Guid id);
+
+        /// <summary>
+        /// Remove the existing.
+        /// </summary>
+        /// <param name="id">
+        /// Unique identifier identifying the existing item.
+        /// </param>
+        void Remove(Guid id);
     }
 }

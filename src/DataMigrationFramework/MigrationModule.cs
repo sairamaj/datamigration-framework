@@ -33,7 +33,7 @@ namespace DataMigrationFramework
         protected override void Load(ContainerBuilder builder)
         {
             var migrationFactory = new DefaultMigrationFactory(this._configData);
-            builder.RegisterInstance(migrationFactory).As<IMigrationFactory>();
+            builder.RegisterInstance(migrationFactory).As<IMigrationFactory>().SingleInstance();
             builder.RegisterType<DefaultMigrationManager>().As<IMigrationManager>().SingleInstance();
             base.Load(builder);
         }

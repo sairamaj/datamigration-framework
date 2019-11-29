@@ -37,7 +37,7 @@ namespace DataMigrationFramework.Integration
                 new Settings()
                 {
                     BatchSize = 2,
-                    SleepBetweenMigration = 0,
+                    DelayBetweenBatches = 0,
                     ErrorThresholdBeforeExit = 100
                 },
                 new Dictionary<string, string>

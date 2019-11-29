@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using Autofac;
 using MediatR;
@@ -25,8 +26,7 @@ namespace DataMigrationFramework.Console
                 return t => c.Resolve(t);
             });
 
-            var migrationFactory = new DefaultMigrationFactory(File.ReadAllText("migrationinfo.json"));
-            builder.RegisterInstance(migrationFactory).As<IMigrationFactory>();
+            builder.RegisterModule(new MigrationModule(File.ReadAllText("migrationinfo.json")));
             builder.RegisterAssemblyTypes(typeof(ServiceContainer).GetTypeInfo().Assembly).AsImplementedInterfaces();
             return builder.Build();
         }

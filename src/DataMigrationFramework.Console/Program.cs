@@ -24,12 +24,21 @@ namespace DataMigrationFramework.Console
             {
                 System.Console.WriteLine("Press any key to continue.");
                 System.Console.ReadLine();
-                var id = mediator.Send(new StartMigrationRequest("personDataMigration"
-                    , new Dictionary<string, string>()
+                for (int i = 0; i < 1000000; i++)
+                {
+                    System.Console.WriteLine($"iiiii -> {i}");
+                    var id = mediator.Send(new StartMigrationRequest("personDataMigration"
+                        , new Dictionary<string, string>()
+                        {
+                            {"inputFileName", @"TestFiles\personsdata.txt"},
+                            {"outputFileName", @"TestFiles\personsdataout.txt"}
+                        })).Result;
+                    if (i % 90 == 0)
                     {
-                        {"inputFileName", @"TestFiles\personsdata.txt" },
-                        {"outputFileName", @"TestFiles\personsdataout.txt" }
-                    })).Result;
+                        System.Console.WriteLine("Press any key to continue.");
+                        System.Console.ReadLine();
+                    }
+                }
             } while (true);
 
             //var dataMigration = new Factory(File.ReadAllText("migrationinfo.json"))
