@@ -93,7 +93,17 @@ Define a configuration file to wire up all source and destination
 ```csharp
     builder.RegisterModule(new MigrationModule(File.ReadAllText("migrationConfig.json")));
 ```
-#### Step6 (Starting migraiton)
+
+#### Step6 (Subscribe for progress)
+```csharp
+    migration.Subscribe(s =>
+    {
+        System.Console.WriteLine($"[Notification] {s.Id}: {s.Status}");
+    });
+
+```
+
+#### Step7 (Starting migration)
 ```csharp
     // unique id through which one can get the status and stop the existing migration
     // Name of the migration task (should be one of value defined in configuration)
@@ -102,14 +112,6 @@ Define a configuration file to wire up all source and destination
     await migrationTask.StartAsync();
 ```
 
-#### Step7 (Monitoring progress)
-```csharp
-    migration.Subscribe(s =>
-    {
-        System.Console.WriteLine($"[Notification] {s.Id}: {s.Status}");
-    });
-
-```
 
 ### Coniguration
 | Name                                      |  Description                                       | Default  |
