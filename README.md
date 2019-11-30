@@ -59,7 +59,7 @@ Implement __IDestination<T>__ for consuming the data.
     }
 ```
 
-#### Step5
+#### Step4
 Define a configuration file to wire up all source and destination
 ```json
 [
@@ -70,7 +70,7 @@ Define a configuration file to wire up all source and destination
     "ModelTypeName": "DataMigrationFramework.Samples.Model.Person,DataMigrationFramework.Samples.dll",
     "settings": {
       "batchSize": 1,
-      "sleepBetweenMigration": 2000,
+      "delayBetweenBatches": 2000,
       "errorThresholdBeforeExit": 100,
       "notifyStatusRecordSizeFrequency": 100,
       "maxNumberOfRecords":  100000 
@@ -89,7 +89,7 @@ Define a configuration file to wire up all source and destination
 
 ]
 ```
-#### Step6 (Registering Autofac module)
+#### Step5 (Registering Autofac module)
 ```csharp
     builder.RegisterModule(new MigrationModule(File.ReadAllText("migrationConfig.json")));
 ```
@@ -100,6 +100,15 @@ Define a configuration file to wire up all source and destination
     // Parameters which will be passed to source and destination (through PrepareAsync method).
     var migrationTask = _manager.Create(uniqueId,  "personDataMigration", new Dictionary<string,string>{});
     await migrationTask.StartAsync();
+```
+
+#### Step7 (Monitoring progress)
+```csharp
+    migration.Subscribe(s =>
+    {
+        System.Console.WriteLine($"[Notification] {s.Id}: {s.Status}");
+    });
+
 ```
 
 ### Coniguration
