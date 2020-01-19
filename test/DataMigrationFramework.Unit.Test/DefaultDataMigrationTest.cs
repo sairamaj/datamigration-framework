@@ -97,7 +97,7 @@ namespace DataMigrationFramework.Unit.Test
             creator.MockSource.Stub(source => source.ProduceAsync(1)).Return(Task.FromResult(items));
             creator.MockDestination.Stub(source => source.ConsumeAsync(items))
                 .IgnoreArguments()
-                .Do((ConsumerDelegate<string>) (consumeItems => Task.FromResult(consumeItems.Count())));
+                .Do((ConsumerDelegate<string>)(consumeItems => Task.FromResult(consumeItems.Count())));
             var migration = creator.DefaultDataMigration;
 
             // Act
@@ -154,7 +154,7 @@ namespace DataMigrationFramework.Unit.Test
             creator.MockSource.Stub(source => source.ProduceAsync(1)).Return(Task.FromResult(empty)).Repeat.Once();
             creator.MockDestination.Stub(source => source.ConsumeAsync(items))
                 .IgnoreArguments()
-                .Do((ConsumerDelegate<string>) (consumeItems => Task.FromResult(consumeItems.Count())));
+                .Do((ConsumerDelegate<string>)(consumeItems => Task.FromResult(consumeItems.Count())));
             var migration = creator.DefaultDataMigration;
 
             var states = new List<MigrationStatus>();
@@ -170,15 +170,6 @@ namespace DataMigrationFramework.Unit.Test
             states.Should().Contain(MigrationStatus.Starting);
             states.Should().Contain(MigrationStatus.Running);
             states.Should().Contain(MigrationStatus.Completed);
-            //    BeEquivalentTo(new List<MigrationStatus>
-            //{
-            //    MigrationStatus.Starting,
-            //    MigrationStatus.Running,
-            //    MigrationStatus.Running,
-            //    MigrationStatus.Running,
-            //    MigrationStatus.Running,
-            //    MigrationStatus.Completed
-            //});
         }
 
         [Test]
@@ -300,6 +291,64 @@ namespace DataMigrationFramework.Unit.Test
 
             // Assert.
             result.Status.Should().Be(MigrationStatus.Exception);
+        }
+
+        [Test(Description = "Multi consumers should be used.")]
+        public async Task MultiConsumerShouldBeCreatedWhenNumberOfConsumersSet()
+        {
+            // Arrange
+            var settings = new Settings() { NumberOfConsumers = 3, BatchSize = 3, ErrorThresholdBeforeExit = Int32.MaxValue };
+            var creator = new DataMigrationCreator<string>(settings);
+            IEnumerable<string> items = new List<string> { "test1", "test2", "test3" };
+            IEnumerable<string> empty = new List<string> { };
+            creator.MockSource.Stub(source => source.ProduceAsync(3)).Return(Task.FromResult(items)).Repeat.Once();
+            creator.MockSource.Stub(source => source.ProduceAsync(3)).Return(Task.FromResult(empty)).Repeat.Once();
+            var consumerCount = 0;
+            creator.MockDestination.Stub(source => source.ConsumeAsync(items))
+                .IgnoreArguments()
+                .Do((ConsumerDelegate<string>)(consumeItems =>
+                {
+                    consumerCount++;            // count consumer count.
+                    return Task.FromResult(consumeItems.Count());
+                }));
+            var migration = creator.DefaultDataMigration;
+
+
+            // Act
+            var result = await migration.StartAsync();
+
+            // Assert.
+            consumerCount.Should().Be(3);
+            result.Status.Should().Be(MigrationStatus.Completed);
+        }
+
+        [Test(Description = "Consumers count is more than produced and should use less consumers.")]
+        public async Task NumberOfItemsLessThanNumberOfConsumersShouldUseLessConsumers()
+        {
+            // Arrange
+            var settings = new Settings() { NumberOfConsumers = 10, BatchSize = 3, ErrorThresholdBeforeExit = Int32.MaxValue };
+            var creator = new DataMigrationCreator<string>(settings);
+            IEnumerable<string> items = new List<string> { "test1", "test2", "test3" };
+            IEnumerable<string> empty = new List<string> { };
+            creator.MockSource.Stub(source => source.ProduceAsync(3)).Return(Task.FromResult(items)).Repeat.Once();
+            creator.MockSource.Stub(source => source.ProduceAsync(3)).Return(Task.FromResult(empty)).Repeat.Once();
+            var consumerCount = 0;
+            creator.MockDestination.Stub(source => source.ConsumeAsync(items))
+                .IgnoreArguments()
+                .Do((ConsumerDelegate<string>)(consumeItems =>
+                {
+                    consumerCount++;            // count consumer count.
+                    return Task.FromResult(consumeItems.Count());
+                }));
+            var migration = creator.DefaultDataMigration;
+
+
+            // Act
+            var result = await migration.StartAsync();
+
+            // Assert.
+            consumerCount.Should().Be(3);
+            result.Status.Should().Be(MigrationStatus.Completed);
         }
     }
 }

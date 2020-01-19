@@ -16,10 +16,19 @@
         private int _maximumRecordsCountLimit;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Settings"/> class.
+        /// </summary>
+        public Settings()
+        {
+            this.NumberOfConsumers = 1;
+        }
+
+        /// <summary>
         /// Gets default settings.
         /// </summary>
         public static Settings Default => new Settings()
         {
+            NumberOfConsumers = 1,
             BatchSize = 5,
             DelayBetweenBatches = 10,
             ErrorThresholdBeforeExit = 10,
@@ -41,6 +50,11 @@
         /// Gets or sets number of errors where the migration process stops.
         /// </summary>
         public int ErrorThresholdBeforeExit { get; set; }
+
+        /// <summary>
+        /// Gets or sets number of consumers active.
+        /// </summary>
+        public int NumberOfConsumers { get; set; }
 
         /// <summary>
         /// Gets or sets notify status for every given number of records.

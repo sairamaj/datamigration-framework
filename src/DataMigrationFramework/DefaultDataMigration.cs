@@ -141,6 +141,7 @@ namespace DataMigrationFramework
         /// </returns>
         public async Task<MigrationInformation> StartAsync()
         {
+            this.Validate();
             return await this.InternalStart();
         }
 
@@ -210,7 +211,9 @@ namespace DataMigrationFramework
                             break;
                         }
 
-                        var successCount = await this._destination.ConsumeAsync(items);
+                        var consumerHelper = new ConsumerHelper<T>(this._destination, this._settings.NumberOfConsumers);
+                        var successCount = consumerHelper.Consume(items);
+
                         this._statusCollector.Update(currentProduced, successCount, currentProduced - successCount);
                         if (this._statusCollector.IsStatusNotify)
                         {
@@ -229,6 +232,7 @@ namespace DataMigrationFramework
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     this.LastException = e;
                     this.FlagStatus(MigrationStatus.Exception);
                 }
@@ -243,6 +247,17 @@ namespace DataMigrationFramework
             });
 
             return tcs.Task;
+        }
+
+        /// <summary>
+        /// Validates the settings before start.
+        /// </summary>
+        private void Validate()
+        {
+            if (this._settings.NumberOfConsumers < 1 || this._settings.NumberOfConsumers > 32)
+            {
+                throw new InvalidOperationException($"{this._settings.NumberOfConsumers} is not valid. It should be between 1-32");
+            }
         }
 
         /// <summary>

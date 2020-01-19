@@ -140,6 +140,11 @@
             A <see cref="T:System.Threading.Tasks.Task`1"/> representing the asynchronous operation.
             </returns>
         </member>
+        <member name="M:DataMigrationFramework.DefaultDataMigration`1.Validate">
+            <summary>
+            Validates the settings before start.
+            </summary>
+        </member>
         <member name="M:DataMigrationFramework.DefaultDataMigration`1.FlagStatus(DataMigrationFramework.Model.MigrationStatus)">
             <summary>
             Flags the current migration status.
@@ -1014,6 +1019,11 @@
             Record count limit.
             </summary>
         </member>
+        <member name="M:DataMigrationFramework.Model.Settings.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.Model.Settings"/> class.
+            </summary>
+        </member>
         <member name="P:DataMigrationFramework.Model.Settings.Default">
             <summary>
             Gets default settings.
@@ -1032,6 +1042,11 @@
         <member name="P:DataMigrationFramework.Model.Settings.ErrorThresholdBeforeExit">
             <summary>
             Gets or sets number of errors where the migration process stops.
+            </summary>
+        </member>
+        <member name="P:DataMigrationFramework.Model.Settings.NumberOfConsumers">
+            <summary>
+            Gets or sets number of consumers active.
             </summary>
         </member>
         <member name="P:DataMigrationFramework.Model.Settings.NotifyStatusRecordSizeFrequency">
