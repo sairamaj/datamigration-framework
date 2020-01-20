@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -212,7 +213,7 @@ namespace DataMigrationFramework
                         }
 
                         var consumerHelper = new ConsumerHelper<T>(this._destination, this._settings.NumberOfConsumers);
-                        var successCount = consumerHelper.Consume(items);
+                        var successCount = consumerHelper.Consume(items, this._cancellationToken.Token);
 
                         this._statusCollector.Update(currentProduced, successCount, currentProduced - successCount);
                         if (this._statusCollector.IsStatusNotify)
@@ -226,7 +227,7 @@ namespace DataMigrationFramework
 
                     this.FlagStatus(MigrationStatus.Completed);
                 }
-                catch (TaskCanceledException)
+                catch (OperationCanceledException)
                 {
                     this.FlagStatus(MigrationStatus.Cancelled);
                 }

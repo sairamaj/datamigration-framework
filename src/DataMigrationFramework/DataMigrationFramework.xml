@@ -33,12 +33,15 @@
             Number of consumers.
             </param>
         </member>
-        <member name="M:DataMigrationFramework.ConsumerHelper`1.Consume(System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:DataMigrationFramework.ConsumerHelper`1.Consume(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
             <summary>
             Consume given items.
             </summary>
             <param name="items">
             A <see cref="T:System.Collections.Generic.IEnumerable`1"/> of items to pass it to destination consumer.
+            </param>
+            <param name="cancellationToken">
+            Cancellation token used for cancellation.
             </param>
             <returns>
             Actual items consumed successfully.

@@ -43,7 +43,7 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 1);
 
             // Act
-            var consumed = helper.Consume(new string[] { });
+            var consumed = helper.Consume(new string[] { }, new CancellationToken());
 
             consumed.Should().Be(0);
             mockDestination.AssertWasNotCalled(destination => destination.ConsumeAsync(new string[] { }));
@@ -64,7 +64,7 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 1);
 
             // Act
-            var consumed = helper.Consume(new[] { "one", "two", "three" });
+            var consumed = helper.Consume(new[] { "one", "two", "three" }, new CancellationToken());
 
             consumed.Should().Be(3);
             mockDestination.AssertWasCalled(
@@ -95,11 +95,12 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 3);
 
             // Act
-            var consumed = helper.Consume(new[] { "one", "two"});
+            var consumed = helper.Consume(new[] { "one", "two"}, new CancellationToken());
 
             consumed.Should().Be(2);
             consumeData.Keys.Count.Should().Be(2);      // two consumers should exists
-            // todo: match
+            consumeData.First().Value.Count().Should().Be(1);
+            consumeData.Last().Value.Count().Should().Be(1);
         }
 
         [Test(Description = "One Consumers are equal to size each consumer should call with one item.")]
@@ -125,11 +126,12 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 3);
 
             // Act
-            var consumed = helper.Consume(new[] { "one", "two", "three" });
+            var consumed = helper.Consume(new[] { "one", "two", "three" }, new CancellationToken());
 
             consumed.Should().Be(3);
             consumeData.Keys.Count.Should().Be(3);      // two consumers should exists
-            // todo: match
+            var consumedItems = consumeData.Values.SelectMany(s => s);
+            consumedItems.Should().BeEquivalentTo(new string[] {"one", "two","three" });
         }
 
         [Test(Description = "One Consumers are less than size, should all consumers with each size more than 1.")]
@@ -155,7 +157,7 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 3);
 
             // Act
-            var consumed = helper.Consume(new[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" });
+            var consumed = helper.Consume(new[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" }, new CancellationToken());
 
             consumed.Should().Be(10);
             consumeData.Keys.Count.Should().Be(3);      // two consumers should exists

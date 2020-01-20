@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DataMigrationFramework
@@ -49,10 +51,13 @@ namespace DataMigrationFramework
         /// <param name="items">
         /// A <see cref="IEnumerable{T}"/> of items to pass it to destination consumer.
         /// </param>
+        /// <param name="cancellationToken">
+        /// Cancellation token used for cancellation.
+        /// </param>
         /// <returns>
         /// Actual items consumed successfully.
         /// </returns>
-        public int Consume(IEnumerable<T> items)
+        public int Consume(IEnumerable<T> items, CancellationToken cancellationToken)
         {
             items = items.ToList();
             var size = items.Count();
@@ -73,24 +78,21 @@ namespace DataMigrationFramework
             var tasks = new List<Task<int>>();
             for (var i = 0; i < actualConsumers; i++)
             {
-                if (i == actualConsumers-1)
+                if (i == actualConsumers - 1)
                 {
                     perConsumerSize += lastSize;
                 }
 
-                Console.WriteLine($"skip {skip} perConsumerSize:{perConsumerSize}");
                 var consumerItems = items.Skip(skip).Take(perConsumerSize);
                 tasks.Add(this._destination.ConsumeAsync(consumerItems));
                 skip += perConsumerSize;
             }
 
-            Console.WriteLine("tasks running...");
             var successCount = 0;
+            Task.WaitAll(tasks.ToArray(), cancellationToken);
             foreach (var task in tasks)
             {
-                Console.WriteLine($" task:");
                 successCount += task.Result;
-                Console.WriteLine($"success after: {successCount}");
             }
 
             return successCount;
