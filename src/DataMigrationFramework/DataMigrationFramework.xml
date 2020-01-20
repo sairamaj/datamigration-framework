@@ -4,6 +4,46 @@
         <name>DataMigrationFramework</name>
     </assembly>
     <members>
+        <member name="T:DataMigrationFramework.ConsumerHelper`1">
+            <summary>
+            Helper class to distribute items to consume.
+            </summary>
+            <typeparam name="T">
+            Type name of the model.
+            </typeparam>
+        </member>
+        <member name="F:DataMigrationFramework.ConsumerHelper`1._destination">
+            <summary>
+            Destination instance.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.ConsumerHelper`1._numberOfConsumers">
+            <summary>
+            Number of consumers.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.ConsumerHelper`1.#ctor(DataMigrationFramework.IDestination{`0},System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.ConsumerHelper`1"/> class.
+            </summary>
+            <param name="destination">
+            A <see cref="T:DataMigrationFramework.IDestination`1"/> instance.
+            </param>
+            <param name="numberOfConsumers">
+            Number of consumers.
+            </param>
+        </member>
+        <member name="M:DataMigrationFramework.ConsumerHelper`1.Consume(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Consume given items.
+            </summary>
+            <param name="items">
+            A <see cref="T:System.Collections.Generic.IEnumerable`1"/> of items to pass it to destination consumer.
+            </param>
+            <returns>
+            Actual items consumed successfully.
+            </returns>
+        </member>
         <member name="T:DataMigrationFramework.DefaultDataMigration`1">
             <summary>
             Default data migration implementation of <see cref="T:DataMigrationFramework.IDataMigration"/>.

@@ -188,6 +188,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsumerHelperTest.cs" />
     <Compile Include="DataMigrationCreator.cs" />
     <Compile Include="DefaultDataMigrationTest.cs" />
     <Compile Include="DefaultMigrationManagerTest.cs" />
