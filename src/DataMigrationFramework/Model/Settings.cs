@@ -62,7 +62,6 @@
         /// Gets or sets number of producers active.
         /// </summary>
         public int NumberOfProducers { get; set; }
-        
 
         /// <summary>
         /// Gets or sets notify status for every given number of records.
