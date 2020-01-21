@@ -21,6 +21,7 @@
         public Settings()
         {
             this.NumberOfConsumers = 1;
+            this.NumberOfProducers = 1;
         }
 
         /// <summary>
@@ -29,6 +30,7 @@
         public static Settings Default => new Settings()
         {
             NumberOfConsumers = 1,
+            NumberOfProducers = 1,
             BatchSize = 5,
             DelayBetweenBatches = 10,
             ErrorThresholdBeforeExit = 10,
@@ -55,6 +57,12 @@
         /// Gets or sets number of consumers active.
         /// </summary>
         public int NumberOfConsumers { get; set; }
+
+        /// <summary>
+        /// Gets or sets number of producers active.
+        /// </summary>
+        public int NumberOfProducers { get; set; }
+        
 
         /// <summary>
         /// Gets or sets notify status for every given number of records.

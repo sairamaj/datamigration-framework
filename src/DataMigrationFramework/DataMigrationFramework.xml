@@ -1092,6 +1092,11 @@
             Gets or sets number of consumers active.
             </summary>
         </member>
+        <member name="P:DataMigrationFramework.Model.Settings.NumberOfProducers">
+            <summary>
+            Gets or sets number of producers active.
+            </summary>
+        </member>
         <member name="P:DataMigrationFramework.Model.Settings.NotifyStatusRecordSizeFrequency">
             <summary>
             Gets or sets notify status for every given number of records.
@@ -1101,6 +1106,49 @@
             <summary>
             Gets or sets notify status for every given number of records.
             </summary>
+        </member>
+        <member name="T:DataMigrationFramework.ProducerHelper`1">
+            <summary>
+            Helper class to consolidate from multiple producers.
+            </summary>
+            <typeparam name="T">
+            Type name of the model.
+            </typeparam>
+        </member>
+        <member name="F:DataMigrationFramework.ProducerHelper`1._source">
+            <summary>
+            Source instance.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.ProducerHelper`1._numberOfProducers">
+            <summary>
+            Number of consumers.
+            </summary>
+        </member>
+        <member name="M:DataMigrationFramework.ProducerHelper`1.#ctor(DataMigrationFramework.ISource{`0},System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataMigrationFramework.ProducerHelper`1"/> class.
+            </summary>
+            <param name="source">
+            A <see cref="T:DataMigrationFramework.ISource`1"/> instance for collecting the items.
+            </param>
+            <param name="numberOfProducers">
+            Number of producers.
+            </param>
+        </member>
+        <member name="M:DataMigrationFramework.ProducerHelper`1.Produce(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Consolidates the items from the sources. 
+            </summary>
+            <param name="batchSize">
+            Batch size used for querying the source for number of items.
+            </param>
+            <param name="cancellationToken">
+            Cancellation token used for cancellation.
+            </param>
+            <returns>
+            A <see cref="T:System.Collections.Generic.IEnumerable`1"/> of items.
+            </returns>
         </member>
         <member name="T:DataMigrationFramework.StatusCollector">
             <summary>

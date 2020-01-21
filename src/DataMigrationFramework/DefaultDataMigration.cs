@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -204,8 +205,8 @@ namespace DataMigrationFramework
 
                     do
                     {
-                        var items = await this._source.ProduceAsync(this._settings.BatchSize);
-                        items = items.ToList();
+                        var producerHelper = new ProducerHelper<T>(this._source, this._settings.NumberOfProducers);
+                        var items = producerHelper.Produce(this._settings.BatchSize, this._cancellationToken.Token).ToList();
                         int currentProduced = items.Count();
                         if (currentProduced == 0)
                         {
