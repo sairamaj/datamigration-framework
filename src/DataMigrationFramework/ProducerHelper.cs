@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,18 +60,41 @@ namespace DataMigrationFramework
         public IEnumerable<T> Produce(int batchSize, CancellationToken cancellationToken)
         {
             var tasks = new List<Task<IEnumerable<T>>>();
+            new ConsoleProduceTracer().Log("ProducerHelper",$"Number of Producers {this._numberOfProducers}");
             for (var i = 0; i < this._numberOfProducers; i++)
             {
+                new ConsoleProduceTracer().Log("ProducerHelper", $"Produce Task: {i} ");
                 tasks.Add(this._source.ProduceAsync(batchSize));
+                new ConsoleProduceTracer().Log("ProducerHelper", $"Produce Task: {i} async done. ");
             }
 
+            var watch = new Stopwatch();
+            watch.Start();
+            new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers {this._numberOfProducers} tasks:{tasks.Count}");
             Task.WaitAll(tasks.ToArray(), cancellationToken);
+            watch.Stop();
+            new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers Waiting done...:{watch.ElapsedMilliseconds}(ms)");
 
+            new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers Waiting done...:Enumerating");
+            watch.Start();
             IList<T> items = new List<T>();
             foreach (var task in tasks)
             {
-                items = items.Union(task.Result).ToList();
+                var watch1 = new Stopwatch();
+                try
+                {
+                    watch1.Start();
+                    items = items.Union(task.Result).ToList();
+                }
+                finally
+                {
+                    watch1.Stop();
+                    new ConsoleProduceTracer().Log("ProducerHelper", $"Task took:{watch1.ElapsedMilliseconds}(ms) for:{items.Count()}");
+                }
             }
+
+            watch.Stop();
+            new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers Waiting done...:Enumerating:{items.Count} : took:{watch.ElapsedMilliseconds}(ms)");
 
             return items;
         }

@@ -6,6 +6,7 @@ namespace DataMigrationFramework
     {
         IEnumerable<T> Get(int size);
         void Start();
+        void Stop();
         void Pause();
         void Continue();
     }

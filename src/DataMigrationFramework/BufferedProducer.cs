@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -53,9 +54,14 @@ namespace DataMigrationFramework
             _readerThread.Start();
         }
 
+        public void Stop()
+        {
+            this._stopReadingEvent.Set();
+        }
+
         public void Pause()
         {
-            this._producerTracer.Log(TraceName,"Pausing");
+            this._producerTracer.Log(TraceName, "Pausing");
             this._recordTracker.Pause();
         }
 
@@ -67,36 +73,40 @@ namespace DataMigrationFramework
 
         public IEnumerable<T> Get(int batchSize)
         {
-            _producerTracer.Log(TraceName, $"[Get]Looking for Current:{CurrentCachedRecordCount} : {batchSize} : {_doneReadingRecords}");
-            if (CurrentCachedRecordCount >= batchSize || _doneReadingRecords)
-            {
-                return TakeAndRemove(batchSize);     // we have enough records in cache to return 
-            }
-
-            // we don't have enough. lets wait for records ready.
+            var watch = new Stopwatch();
+            watch.Start();
             while (true)
             {
-                var waitForRecords = new WaitHandle[2];
-                waitForRecords[0] = _recordsReadAndReady;
-                waitForRecords[1] = _doneWithReadingEvent;
-
-                _producerTracer.Log(TraceName, $"[Get]Waiting for records loop...");
-                var ret = WaitHandle.WaitAny(waitForRecords, TimeWaitForRecordsReady);
-
-                _producerTracer.Log(TraceName, $"[Get]ret:{ret} _doneReadingRecords:{_doneReadingRecords}");
-                if (ret == 0 || _doneReadingRecords)
+                this._producerTracer.Log(TraceName, $"[Get]Looking for Current:{this.CurrentCachedRecordCount} : {batchSize} : {this._doneReadingRecords}");
+                if (this.CurrentCachedRecordCount > 0)
                 {
-                    if (_engineException != null)
-                    {
-                        throw _engineException;
-                    }
-
-                    // we have enough size or we are done with reading.
-                    return TakeAndRemove(batchSize);
+                    watch.Stop();
+                    this._producerTracer.Log(TraceName, $"Reading records now as we have records...:waited:{watch.ElapsedMilliseconds}(ms)");
+                    return this.TryTakeAndRemove(batchSize);     // we have enough records in cache to return.
                 }
+
+                if (this._doneReadingRecords)
+                {
+                    watch.Stop();
+                    this._producerTracer.Log(TraceName, $"DoneReadingRecords. Take whatever we have: {watch.ElapsedMilliseconds}(ms).");
+                    return this.TryTakeAndRemove(batchSize);     // we have enough records in cache to return.
+                }
+
+                // we don't have enough. lets wait for records ready.
+                var waitForRecords = new WaitHandle[2];
+                waitForRecords[0] = this._recordsReadAndReady;
+                waitForRecords[1] = this._doneWithReadingEvent;
+
+                this._producerTracer.Log(TraceName, $"[Get]Waiting for records loop...");
+                var ret = WaitHandle.WaitAny(waitForRecords, TimeWaitForRecordsReady);
+                this._producerTracer.Log(TraceName, $"[Get]ret:{ret} _doneReadingRecords:{this._doneReadingRecords}");
+                if (this._engineException != null)
+                {
+                    throw this._engineException;
+                }
+                this._producerTracer.Log(TraceName, $"waited: {watch.ElapsedMilliseconds}(ms).");
             }
         }
-
 
         void ReaderThread(object val)
         {
@@ -104,36 +114,35 @@ namespace DataMigrationFramework
             {
                 while (true)
                 {
-                    _recordTracker.Reset();
-                    var recordsRead = _recordsProducer(_batchSize).ToList();
-                    _producerTracer.Log(TraceName, $"[ReaderThread] records read:{recordsRead.Count()}");
+                    this._recordTracker.Reset();
+                    var recordsRead = this._recordsProducer(this._batchSize).ToList();
+                    this._producerTracer.Log(TraceName, $"[ReaderThread] records read:{recordsRead.Count()}");
 
-                    if (!recordsRead.Any() || _stopReadingEvent.WaitOne(0))
+                    this._producerTracer.Log(TraceName, "[ReaderThread] AddRecords");
+                    this.AddRecords(recordsRead);
+                    this._producerTracer.Log(TraceName, "[ReaderThread] Setting _recordsReadAndReady");
+                    this._recordsReadAndReady.Set();
+
+                    if (recordsRead.Count() < this._batchSize || this._stopReadingEvent.WaitOne(0))
                     {
-                        _doneReadingRecords = true;
+                        this._doneReadingRecords = true;
                         this._doneWithReadingEvent.Set();
-                        _producerTracer.Log(TraceName, $"[ReaderThread]Records are done now..");
+                        this._producerTracer.Log(TraceName, $"[ReaderThread]Records are done now..");
                         break;
                     }
 
-                    _producerTracer.Log(TraceName, "[ReaderThread] AddRecords");
-                    this.AddRecords(recordsRead);
-                    _producerTracer.Log(TraceName, "[ReaderThread] Setting _recordsReadAndReady");
-                    this._recordsReadAndReady.Set();
-
                     if (!this.WaitForThrottlingRecords())
                     {
-                        _producerTracer.Log(TraceName, "[ReaderThread] WaitForThrottlingRecord gave false.");
+                        this._producerTracer.Log(TraceName, "[ReaderThread] WaitForThrottlingRecord gave false.");
                         break;  // we are done.
                     }
                 }
             }
             catch (Exception e)
             {
-                _engineException = e;       // this will be used to propagate the exception to caller.
-                _producerTracer.Log(TraceName, $"[ReaderThread] Exception:{e}");
+                this._engineException = e;       // this will be used to propagate the exception to caller.
+                this._producerTracer.Log(TraceName, $"[ReaderThread] Exception:{e}");
             }
-
         }
 
         private bool WaitForThrottlingRecords()
@@ -173,14 +182,19 @@ namespace DataMigrationFramework
             }
         }
 
-        private IEnumerable<T> TakeAndRemove(int batchSize)
+        private IEnumerable<T> TryTakeAndRemove(int batchSize)
         {
-            lock (_cachedRecordSyncObject)
+            lock (this._cachedRecordSyncObject)
             {
                 // caller is already locked this.
-                var records = _cachedRecords.Take(batchSize).ToArray();
-                _cachedRecords.RemoveRange(0, records.Length);
-                _recordThrottlingEvent.Set();
+                var records = this._cachedRecords.Take(batchSize).ToArray();
+                this._cachedRecords.RemoveRange(0, records.Length);
+                if (records.Any())
+                {
+                    this._recordsReadAndReady.Set();        // we have some more records
+                }
+
+                this._recordThrottlingEvent.Set();
                 return records;
             }
         }
