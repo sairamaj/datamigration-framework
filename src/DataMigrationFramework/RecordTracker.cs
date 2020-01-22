@@ -49,13 +49,13 @@ namespace DataMigrationFramework
         public void Pause()
         {
            // this._producerTracer.Log(TraceName, "Pause");
-            //Interlocked.Increment(ref _pauseCount);
+           Interlocked.Increment(ref this._pauseCount);
         }
 
         public void Continue()
         {
             //this._producerTracer.Log(TraceName, "Continue");
-            //Interlocked.Decrement(ref _pauseCount);
+            Interlocked.Decrement(ref this._pauseCount);
         }
 
         public void Set(long currentCount)

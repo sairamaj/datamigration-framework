@@ -33,7 +33,7 @@
             Number of consumers.
             </param>
         </member>
-        <member name="M:DataMigrationFramework.ConsumerHelper`1.Consume(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
+        <member name="M:DataMigrationFramework.ConsumerHelper`1.ConsumeAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
             <summary>
             Consume given items.
             </summary>
@@ -1136,7 +1136,7 @@
             Number of producers.
             </param>
         </member>
-        <member name="M:DataMigrationFramework.ProducerHelper`1.Produce(System.Int32,System.Threading.CancellationToken)">
+        <member name="M:DataMigrationFramework.ProducerHelper`1.ProduceAsync(System.Int32,System.Threading.CancellationToken)">
             <summary>
             Consolidates the items from the sources. 
             </summary>

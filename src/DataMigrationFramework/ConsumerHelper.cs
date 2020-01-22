@@ -56,7 +56,7 @@ namespace DataMigrationFramework
         /// <returns>
         /// Actual items consumed successfully.
         /// </returns>
-        public int Consume(IEnumerable<T> items, CancellationToken cancellationToken)
+        public async Task<int> ConsumeAsync(IEnumerable<T> items, CancellationToken cancellationToken)
         {
             items = items.ToList();
             var size = items.Count();
@@ -87,14 +87,7 @@ namespace DataMigrationFramework
                 skip += perConsumerSize;
             }
 
-            var successCount = 0;
-            Task.WaitAll(tasks.ToArray(), cancellationToken);
-            foreach (var task in tasks)
-            {
-                successCount += task.Result;
-            }
-
-            return successCount;
+            return (await Task.WhenAll(tasks)).Sum(t => t);
         }
     }
 }

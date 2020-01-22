@@ -206,7 +206,7 @@ namespace DataMigrationFramework
                     do
                     {
                         var producerHelper = new ProducerHelper<T>(this._source, this._settings.NumberOfProducers);
-                        var items = producerHelper.Produce(this._settings.BatchSize, this._cancellationToken.Token).ToList();
+                        var items = (await producerHelper.ProduceAsync(this._settings.BatchSize, this._cancellationToken.Token)).ToList();
                         int currentProduced = items.Count();
                         if (currentProduced == 0)
                         {
@@ -214,7 +214,7 @@ namespace DataMigrationFramework
                         }
 
                         var consumerHelper = new ConsumerHelper<T>(this._destination, this._settings.NumberOfConsumers);
-                        var successCount = consumerHelper.Consume(items, this._cancellationToken.Token);
+                        var successCount = await consumerHelper.ConsumeAsync(items, this._cancellationToken.Token);
 
                         this._statusCollector.Update(currentProduced, successCount, currentProduced - successCount);
                         if (this._statusCollector.IsStatusNotify)

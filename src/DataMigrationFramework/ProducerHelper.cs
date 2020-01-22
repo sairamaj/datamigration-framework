@@ -57,7 +57,7 @@ namespace DataMigrationFramework
         /// <returns>
         /// A <see cref="IEnumerable{T}"/> of items.
         /// </returns>
-        public IEnumerable<T> Produce(int batchSize, CancellationToken cancellationToken)
+        public async Task<IEnumerable<T>> ProduceAsync(int batchSize, CancellationToken cancellationToken)
         {
             var tasks = new List<Task<IEnumerable<T>>>();
             new ConsoleProduceTracer().Log("ProducerHelper",$"Number of Producers {this._numberOfProducers}");
@@ -71,30 +71,9 @@ namespace DataMigrationFramework
             var watch = new Stopwatch();
             watch.Start();
             new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers {this._numberOfProducers} tasks:{tasks.Count}");
-            Task.WaitAll(tasks.ToArray(), cancellationToken);
+            var items = (await Task.WhenAll(tasks)).SelectMany(t => t).ToList();
             watch.Stop();
             new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers Waiting done...:{watch.ElapsedMilliseconds}(ms)");
-
-            new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers Waiting done...:Enumerating");
-            watch.Start();
-            IList<T> items = new List<T>();
-            foreach (var task in tasks)
-            {
-                var watch1 = new Stopwatch();
-                try
-                {
-                    watch1.Start();
-                    items = items.Union(task.Result).ToList();
-                }
-                finally
-                {
-                    watch1.Stop();
-                    new ConsoleProduceTracer().Log("ProducerHelper", $"Task took:{watch1.ElapsedMilliseconds}(ms) for:{items.Count()}");
-                }
-            }
-
-            watch.Stop();
-            new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers Waiting done...:Enumerating:{items.Count} : took:{watch.ElapsedMilliseconds}(ms)");
 
             return items;
         }
