@@ -72,13 +72,19 @@ namespace DataMigrationFramework
                 throw new ArgumentException($"{migrationName} not found in configuration.");
             }
 
+            var settings = config.Settings ?? Settings.Default;
+            IDictionary<string, string> migrationParameters = new Dictionary<string, string>(parameters, StringComparer.OrdinalIgnoreCase);
+            migrationParameters["numberOfProducers"] = settings.NumberOfProducers.ToString();
+            migrationParameters["numberOfConsumers"] = settings.NumberOfConsumers.ToString();
+            migrationParameters["batchSize"] = settings.BatchSize.ToString();
+
             var dataMigrationType = typeof(DefaultDataMigration<>).MakeGenericType(config.ModelType);
             return (IDataMigration)this._container.Resolve(
                 dataMigrationType,
                 new NamedParameter("id", id),
                 new NamedParameter("name", migrationName),
-                new NamedParameter("settings", config.Settings ?? Settings.Default),
-                new NamedParameter("parameters", parameters));
+                new NamedParameter("settings", settings),
+                new NamedParameter("parameters", migrationParameters));
         }
     }
 }

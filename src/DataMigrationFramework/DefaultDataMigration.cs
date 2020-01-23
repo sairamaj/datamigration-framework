@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -193,7 +191,8 @@ namespace DataMigrationFramework
         private Task<MigrationInformation> InternalStart()
         {
             TaskCompletionSource<MigrationInformation> tcs = new TaskCompletionSource<MigrationInformation>();
-            new TaskFactory().StartNew(async () =>
+            new TaskFactory().StartNew(
+                async () =>
             {
                 try
                 {
@@ -246,7 +245,8 @@ namespace DataMigrationFramework
                     this.Dispose();
                     tcs.SetResult(this.CurrentMigrationInformation);
                 }
-            });
+            },
+                TaskCreationOptions.LongRunning);
 
             return tcs.Task;
         }
