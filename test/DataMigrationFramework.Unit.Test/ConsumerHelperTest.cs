@@ -36,21 +36,21 @@ namespace DataMigrationFramework.Unit.Test
         }
 
         [Test(Description = "Zero items should not even try to call destination consum.e")]
-        public void ConsumeWithZeroItemsShouldNotCallDestinationConsume()
+        public async Task ConsumeWithZeroItemsShouldNotCallDestinationConsume()
         {
             // Arrange
             var mockDestination = MockRepository.GenerateMock<IDestination<string>>();
             var helper = new ConsumerHelper<string>(mockDestination, 1);
 
             // Act
-            var consumed = helper.Consume(new string[] { }, new CancellationToken());
+            var consumed = await helper.ConsumeAsync(new string[] { }, new CancellationToken());
 
             consumed.Should().Be(0);
             mockDestination.AssertWasNotCalled(destination => destination.ConsumeAsync(new string[] { }));
         }
 
         [Test(Description = "With one consumer should call destination consume with same number of parameters.")]
-        public void ConsumeWithOneConsumerShouldCallWithExactRecords()
+        public async Task ConsumeWithOneConsumerShouldCallWithExactRecords()
         {
             // Arrange
             var mockDestination = MockRepository.GenerateMock<IDestination<string>>();
@@ -64,7 +64,7 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 1);
 
             // Act
-            var consumed = helper.Consume(new[] { "one", "two", "three" }, new CancellationToken());
+            var consumed = await helper.ConsumeAsync(new[] { "one", "two", "three" }, new CancellationToken());
 
             consumed.Should().Be(3);
             mockDestination.AssertWasCalled(
@@ -73,7 +73,7 @@ namespace DataMigrationFramework.Unit.Test
         }
 
         [Test(Description = "One Consumers are greater than size, should use less consumers.")]
-        public void ConsumesMoreThanItemsShouldUseLessConsumers()
+        public async Task ConsumesMoreThanItemsShouldUseLessConsumers()
         {
             var rand = new Random();
             var consumeData = new Dictionary<int, IEnumerable<string>>();
@@ -95,7 +95,7 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 3);
 
             // Act
-            var consumed = helper.Consume(new[] { "one", "two"}, new CancellationToken());
+            var consumed = await helper.ConsumeAsync(new[] { "one", "two"}, new CancellationToken());
 
             consumed.Should().Be(2);
             consumeData.Keys.Count.Should().Be(2);      // two consumers should exists
@@ -104,7 +104,7 @@ namespace DataMigrationFramework.Unit.Test
         }
 
         [Test(Description = "One Consumers are equal to size each consumer should call with one item.")]
-        public void ConsumesEqualToSizeShouldCallDestinationWithOneItemEach()
+        public async Task ConsumesEqualToSizeShouldCallDestinationWithOneItemEach()
         {
             var rand = new Random();
             var consumeData = new Dictionary<int, IEnumerable<string>>();
@@ -126,7 +126,7 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 3);
 
             // Act
-            var consumed = helper.Consume(new[] { "one", "two", "three" }, new CancellationToken());
+            var consumed = await helper.ConsumeAsync(new[] { "one", "two", "three" }, new CancellationToken());
 
             consumed.Should().Be(3);
             consumeData.Keys.Count.Should().Be(3);      // two consumers should exists
@@ -135,7 +135,7 @@ namespace DataMigrationFramework.Unit.Test
         }
 
         [Test(Description = "One Consumers are less than size, should all consumers with each size more than 1.")]
-        public void ConsumesLessThanSizeShouldCallDestination()
+        public async Task ConsumesLessThanSizeShouldCallDestination()
         {
             var rand = new Random();
             var consumeData = new Dictionary<int, IEnumerable<string>>();
@@ -157,7 +157,7 @@ namespace DataMigrationFramework.Unit.Test
             var helper = new ConsumerHelper<string>(mockDestination, 3);
 
             // Act
-            var consumed = helper.Consume(new[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" }, new CancellationToken());
+            var consumed = await helper.ConsumeAsync(new[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" }, new CancellationToken());
 
             consumed.Should().Be(10);
             consumeData.Keys.Count.Should().Be(3);      // two consumers should exists

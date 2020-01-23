@@ -60,22 +60,13 @@ namespace DataMigrationFramework
         public async Task<IEnumerable<T>> ProduceAsync(int batchSize, CancellationToken cancellationToken)
         {
             var tasks = new List<Task<IEnumerable<T>>>();
-            new ConsoleProduceTracer().Log("ProducerHelper",$"Number of Producers {this._numberOfProducers}");
+
             for (var i = 0; i < this._numberOfProducers; i++)
             {
-                new ConsoleProduceTracer().Log("ProducerHelper", $"Produce Task: {i} ");
                 tasks.Add(this._source.ProduceAsync(batchSize));
-                new ConsoleProduceTracer().Log("ProducerHelper", $"Produce Task: {i} async done. ");
             }
 
-            var watch = new Stopwatch();
-            watch.Start();
-            new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers {this._numberOfProducers} tasks:{tasks.Count}");
-            var items = (await Task.WhenAll(tasks)).SelectMany(t => t).ToList();
-            watch.Stop();
-            new ConsoleProduceTracer().Log("ProducerHelper", $"Number of Producers Waiting done...:{watch.ElapsedMilliseconds}(ms)");
-
-            return items;
+            return (await Task.WhenAll(tasks)).SelectMany(t => t).ToList();
         }
     }
 }
