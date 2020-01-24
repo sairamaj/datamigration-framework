@@ -73,7 +73,9 @@ Define a configuration file to wire up all source and destination
       "delayBetweenBatches": 2000,
       "errorThresholdBeforeExit": 100,
       "notifyStatusRecordSizeFrequency": 100,
-      "maxNumberOfRecords":  100000 
+      "maxNumberOfRecords":  100000,
+      "numberOfProducers": 4, 
+      "numberOfConsumers": 4,
     },
     "parameters": {
       "inputFileName": "",
@@ -118,6 +120,8 @@ Define a configuration file to wire up all source and destination
 |------------------------------------------|----------------------------------------------------|----------|
 | BatchSize                                |  Number of items produced by the source            |   5      | 
 | DelayBetweenBatches                      |  Delay between each batch produce (throttling)     |   10(ms) | 
+| NumberOfProducers                        |  Number of producers (throttling)                  |   1      | 
+| NumberOfConsumers                        |  Number of consumers (throttling)                  |   1      | 
 | ErrorThresholdBeforeExit                 |  Errors allowed before migration terminated        |   10     | 
 | MaxNumberOfRecords                       |  Maximum records allowed in migration              | 1000000  | 
 | NotifyStatusRecordSizeFrequency          |  Notifications freqency to notify observers        |   100    | 
