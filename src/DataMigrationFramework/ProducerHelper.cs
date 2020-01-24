@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,7 +45,7 @@ namespace DataMigrationFramework
         }
 
         /// <summary>
-        /// Consolidates the items from the sources. 
+        /// Consolidates the items from the sources.
         /// </summary>
         /// <param name="batchSize">
         /// Batch size used for querying the source for number of items.

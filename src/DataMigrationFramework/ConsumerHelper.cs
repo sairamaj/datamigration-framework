@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,6 +65,7 @@ namespace DataMigrationFramework
                 return 0;
             }
 
+            // find out how many we need to distribute the total items to different consumers equally.
             var actualConsumers = this._numberOfConsumers;
             if (this._numberOfConsumers >= size)
             {

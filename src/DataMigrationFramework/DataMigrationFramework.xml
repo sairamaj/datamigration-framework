@@ -667,6 +667,16 @@
             Size of the dictionary.
             </summary>
         </member>
+        <member name="F:DataMigrationFramework.LimitedSizeDictionary`2._trimSize">
+            <summary>
+            Trim size.
+            </summary>
+        </member>
+        <member name="F:DataMigrationFramework.LimitedSizeDictionary`2._comparer">
+            <summary>
+            Key comparer.
+            </summary>
+        </member>
         <member name="F:DataMigrationFramework.LimitedSizeDictionary`2._dictionary">
             <summary>
             Actual Dictionary.
@@ -1138,7 +1148,7 @@
         </member>
         <member name="M:DataMigrationFramework.ProducerHelper`1.ProduceAsync(System.Int32,System.Threading.CancellationToken)">
             <summary>
-            Consolidates the items from the sources. 
+            Consolidates the items from the sources.
             </summary>
             <param name="batchSize">
             Batch size used for querying the source for number of items.

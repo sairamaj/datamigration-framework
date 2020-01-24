@@ -16,9 +16,9 @@
     <PackageProjectUrl>https://github.com/sairamaj/datamigration-framework</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sairamaj/datamigration-framework</RepositoryUrl>
     <PackageTags>data migration</PackageTags>
-    <PackageReleaseNotes>Fixed loading the migration tasks from app domain base directory</PackageReleaseNotes>
+    <PackageReleaseNotes>Multi producer and consumer has been added (numberOfProduces, numberOfConsumers)</PackageReleaseNotes>
     <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
-    <Version>2.2.0</Version>
+    <Version>2.3.0</Version>
 </PropertyGroup>
 
   <ItemGroup>

@@ -22,8 +22,14 @@ namespace DataMigrationFramework
         /// </summary>
         private readonly int _size;
 
+        /// <summary>
+        /// Trim size.
+        /// </summary>
         private readonly int _trimSize;
-        // private readonly IEqualityComparer<TKey> _comparer;
+
+        /// <summary>
+        /// Key comparer.
+        /// </summary>
         private readonly Comparer<TKey> _comparer;
 
         /// <summary>
